@@ -1,0 +1,17 @@
+<head />
+<body>
+  <button>Click!</button>
+  <script>
+    let counter = 0;
+
+    function startGame() {
+      document.querySelector("button").addEventListener("click", () => counter += 1 )
+      return new Promise((resolve, reject) => setTimeout(() => (counter > 5)? resolve(): reject(), 2000))
+    }
+
+    startGame()
+      .then(() => alert(`You won! -> ${counter}`))
+      .catch(() => alert(`Sorry, you lost -> ${counter}`))
+
+  </script>
+</body>

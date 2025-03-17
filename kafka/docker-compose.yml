@@ -1,0 +1,41 @@
+services:
+  broker:
+    image: apache/kafka:latest
+    container_name: broker
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller               # The node acts as both broker and controller
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:9093,CONTROLLER://localhost:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://broker:9092,EXTERNAL://localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT  # Security protocol for listeners
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1           # Replication factor for the offsets topic
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1   # Replication factor for transaction logs
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1              # Minimum in-sync replicas for transactional logs
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0           # Initial delay before consumer group rebalancing
+      KAFKA_NUM_PARTITIONS: 3                             # Default number of partitions for new topics
+    ports:
+      - "9092:9092"     # Port for Kafka broker
+      - "9093:9093" 
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "./opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kui
+    environment:
+      KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: broker:9092
+      KAFKA_CLUSTERS_0_NAME: local-kafka-cluster
+    ports:
+      - 8084:8080
+    depends_on:
+      - broker
