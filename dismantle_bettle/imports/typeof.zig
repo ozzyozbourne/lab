@@ -1,7 +1,7 @@
 const std = @import("std");
 const expect = std.testing.expect;
 
-const simpleNode = struct {
+pub const simpleNode = struct {
     next: ?*@This() = null,
     value: i32,
 
@@ -28,3 +28,4 @@ fn foo(comptime T: type, ptr: *T) T {
 test "testing_with_simple_nodes" {
     std.debug.print("{s}\n", .{@typeName(simpleNode)});
 }
+

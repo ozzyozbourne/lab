@@ -1,9 +1,6 @@
 const std = @import("std");
 const assert = std.debug.assert;
 
-
-/// An intrusive first in/first out linked list.
-/// The element type T must have a field called "next" of type ?*T
 pub fn FIFOType(comptime T: type) type {
     return struct {
         const FIFO = @This();
@@ -11,10 +8,8 @@ pub fn FIFOType(comptime T: type) type {
         in: ?*T = null,
         out: ?*T = null,
         count: u64 = 0,
-
         // This should only be null if you're sure we'll never want to monitor `count`.
         name: ?[]const u8,
-
         // If the number of elements is large, the constants.verify check in push() can be too
         // expensive. Allow the user to gate it. Could also be a comptime param?
         verify_push: bool = true,
@@ -186,3 +181,6 @@ test "testing_with_simple_nodes" {
     std.debug.print("Working ok so far\n", .{});
 }
 
+// for this to work we need to supply the array in that is already linked it just a function the 
+// takes an in already linked data structure that performs the neccessary functions for that structure 
+// so th
