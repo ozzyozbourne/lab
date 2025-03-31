@@ -1,0 +1,16 @@
+type Query {
+    restaurant(restaurant_id:String): Restaurant
+    restaurants(borough: String, cuisine: String): [Restaurant]
+}
+
+type Mutation{
+    createRestaurant(restaurant_id: String, name: String, borough: String, cuisine: String): Restaurant
+    deleteRestaurant(restaurant_id: String): Boolean
+}
+
+type Restaurant{
+    restaurant_id: String
+    name: String
+    borough: String
+    cuisine: String
+}
