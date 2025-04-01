@@ -1,10 +1,12 @@
 package org.acme;
 
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.subscription.Cancellable;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 public class MyUni {
 
@@ -30,6 +32,7 @@ public class MyUni {
         uni.subscribe().with(item -> System.out.println(">> " + item));
 
         Cancellable sr = Uni.createFrom().item(1).onItem().transform(s -> "hello" + s)
+                .invoke(i -> System.out.println(i))
                 .onItem().delayIt().by(Duration.ofSeconds(1)).subscribe()
                 .with(
                         i -> System.out.println("Success -> " + i),
@@ -44,6 +47,18 @@ public class MyUni {
         et.subscribe().with(System.out::println);
         et.subscribe().with(System.out::println);
         et.subscribe().with(System.out::println);
+
+        Multi<Integer> multi = Multi.createFrom().items(() ->
+                IntStream.range(counter.getAndIncrement(), counter.get() * 2).boxed());
+
+        Multi<String> someMulti = Multi.createFrom().items("a", "b", "c");
+        someMulti
+                .onItem()
+                .invoke(i -> System.out.println(i))
+                .onItem().transform(String::toUpperCase)
+                .invoke(i -> System.out.println(i))
+                .subscribe().with(
+                        System.out::println); // Print A B C
 
     }
 }

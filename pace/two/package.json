@@ -18,6 +18,7 @@
     "express": "^4.21.2",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
-    "mongodb": "^6.15.0"
+    "mongodb": "^6.15.0",
+    "redis": "^4.7.0"
   }
 }
