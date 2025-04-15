@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import db from "./db/connection.js"
 import redisClient from './db/redis.js'
+import messageQueue from './db/bull.js'
 
 const PORT = process.env.PORT || 8000
 const app = express()
@@ -52,6 +53,15 @@ app.post('/restaurants', function(req, res) {
         cuisine: cuisine,
     }).then(result => result.acknowledged ? res.send({ restaurant_id, name, borough, cuisine }) : res.status(500).send("Failed"))
         .catch(() => res.status(500).send("Failed"))
+})
+
+app.put('/restaurants/:id', async function(req, res) {
+    const restaurant_id = req.params['id'], updates = req.body['updates']
+    messageQueue.add({
+        restaurant_id: restaurant_id,
+        updates: JSON.stringify(updates)
+    })
+    res.send('Message Queued')
 })
 
 app.delete('/restaurants/:id', async function(req, res) {

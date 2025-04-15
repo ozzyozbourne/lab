@@ -1,0 +1,17 @@
+{
+	"ulid": "01JRCNP68EZ65PACGSCM18RZSE",
+	"minTime": 1744171302013,
+	"maxTime": 1744178400000,
+	"stats": {
+		"numSamples": 6039,
+		"numSeries": 51,
+		"numChunks": 54
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01JRCNP68EZ65PACGSCM18RZSE"
+		]
+	},
+	"version": 1
+}

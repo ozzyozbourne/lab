@@ -42,4 +42,7 @@ func countDownFrom(from int) iter.Seq2[int, int] {
 func main() {
 	sleeper := &ConfigurableSleeper{1 * time.Second, time.Sleep}
 	CountDown(os.Stdout, sleeper)
+	go func() {
+		_ = 1 + 1
+	}()
 }
