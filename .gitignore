@@ -10,6 +10,7 @@
 **/logs
 **/target/
 **/debug/
+**/container/
 
 *.log
 *.exe
@@ -38,6 +39,7 @@ gradle-app.setting
 .factorypath
 .gradle
 .gradletasknamecache
+.bsp
 
 
 hs_err_pid*
