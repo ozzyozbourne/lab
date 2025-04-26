@@ -7,16 +7,86 @@ document.addEventListener('DOMContentLoaded', function() {
     const departureAirportSelect = document.getElementById('departure-airport');
     const arrivalAirportSelect = document.getElementById('arrival-airport');
 
+    const countryResults = document.getElementById('country-results');
+    const airlineResults = document.getElementById('airline-results');
+    const airportResults = document.getElementById('airport-results');
+    const routesResults = document.getElementById('routes-results');
+    const connectionResults = document.getElementById('connection-results');
+
     setupEventListeners();
 
     function setupEventListeners() {
-        document.getElementById('load-country-data').addEventListener('click', loadCountryData);
-        document.getElementById('load-airline-data').addEventListener('click', loadAirlineData);
-        document.getElementById('load-airport-data').addEventListener('click', loadAirportData);
-        document.getElementById('load-departures').addEventListener('click', loadDepartingRoutes);
-        document.getElementById('load-arrivals').addEventListener('click', loadArrivingRoutes);
-        document.getElementById('load-airlines').addEventListener('click', loadAirportAirlines);
-        document.getElementById('get-route-details').addEventListener('click', getRouteDetails);
+        document.getElementById('load-country-data').addEventListener('click', function() {
+            toggleSection(this, countryResults);
+            if (this.classList.contains('active')) {
+                loadCountryData();
+            }
+        });
+
+        document.getElementById('load-airline-data').addEventListener('click', function() {
+            toggleSection(this, airlineResults);
+            if (this.classList.contains('active')) {
+                loadAirlineData();
+            }
+        });
+
+        document.getElementById('load-airport-data').addEventListener('click', function() {
+            toggleSection(this, airportResults);
+            if (this.classList.contains('active')) {
+                loadAirportData();
+            }
+        });
+
+        document.getElementById('load-departures').addEventListener('click', function() {
+            toggleSection(this, routesResults);
+            if (this.classList.contains('active')) {
+                loadDepartingRoutes();
+            }
+        });
+
+        document.getElementById('load-arrivals').addEventListener('click', function() {
+            toggleSection(this, routesResults);
+            if (this.classList.contains('active')) {
+                loadArrivingRoutes();
+            }
+        });
+
+        document.getElementById('load-airlines').addEventListener('click', function() {
+            toggleSection(this, routesResults);
+            if (this.classList.contains('active')) {
+                loadAirportAirlines();
+            }
+        });
+
+        document.getElementById('get-route-details').addEventListener('click', function() {
+            toggleSection(this, connectionResults);
+            if (this.classList.contains('active')) {
+                getRouteDetails();
+            }
+        });
+    }
+
+    function toggleSection(button, sectionContent) {
+        const parentSection = button.closest('.search-section');
+        const allSectionsInContainer = parentSection.querySelectorAll('.section-content');
+        const allButtonsInContainer = parentSection.querySelectorAll('button');
+
+        allSectionsInContainer.forEach(section => {
+            section.classList.remove('active');
+        });
+
+        allButtonsInContainer.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        button.classList.toggle('active');
+        sectionContent.classList.toggle('active');
+
+        if (sectionContent.classList.contains('active')) {
+            parentSection.classList.add('active');
+        } else {
+            parentSection.classList.remove('active');
+        }
     }
 
 

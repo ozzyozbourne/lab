@@ -70,9 +70,11 @@
             <option value="TR">Turkey</option>
             <option value="PE">Peru</option>
           </select>
-          <button id="load-country-data">View Airlines & Airports</button>
+          <button id="load-country-data">
+            View Airlines & Airports <span class="indicator">▼</span>
+          </button>
         </div>
-        <div class="results-container">
+        <div class="results-container section-content" id="country-results">
           <div class="results-column">
             <h2>Airlines</h2>
             <ul id="airlines-list"></ul>
@@ -137,9 +139,11 @@
             <option value="BI">Royal Brunei Airlines</option>
             <option value="TK">Turkish Airlines</option>
           </select>
-          <button id="load-airline-data">View Routes</button>
+          <button id="load-airline-data">
+            View Routes <span class="indicator">▼</span>
+          </button>
         </div>
-        <div class="results-container">
+        <div class="results-container section-content" id="airline-results">
           <div class="results-column">
             <h2>Airports And Routes Info</h2>
             <ul id="airline-routes-list"></ul>
@@ -333,9 +337,11 @@
             </option>
           </select>
 
-          <button id="load-airport-data">View Details</button>
+          <button id="load-airport-data">
+            View Details <span class="indicator">▼</span>
+          </button>
         </div>
-        <div class="results-container">
+        <div class="results-container section-content" id="airport-results">
           <div class="results-column">
             <h2>Airport Information</h2>
             <div id="airport-info"></div>
@@ -534,12 +540,18 @@
             </option>
           </select>
           <div class="button-group">
-            <button id="load-departures">View Departing Routes</button>
-            <button id="load-arrivals">View Arriving Routes</button>
-            <button id="load-airlines">View Airlines</button>
+            <button id="load-departures">
+              View Departing Routes <span class="indicator">▼</span>
+            </button>
+            <button id="load-arrivals">
+              View Arriving Routes <span class="indicator">▼</span>
+            </button>
+            <button id="load-airlines">
+              View Airlines <span class="indicator">▼</span>
+            </button>
           </div>
         </div>
-        <div class="results-container">
+        <div class="results-container section-content" id="routes-results">
           <h2 id="routes-title">Routes</h2>
           <ul id="routes-list"></ul>
         </div>
@@ -950,10 +962,12 @@
             </select>
           </div>
           <div class="button-group">
-            <button id="get-route-details">View Route Details</button>
+            <button id="get-route-details">
+              View Route Details <span class="indicator">▼</span>
+            </button>
           </div>
         </div>
-        <div class="results-container">
+        <div class="results-container section-content" id="connection-results">
           <h2 id="between-title">Connection Information</h2>
           <div id="between-content"></div>
         </div>
