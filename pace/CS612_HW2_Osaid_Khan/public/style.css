@@ -219,3 +219,21 @@ select:focus {
   border-color: #777777;
   box-shadow: 0 0 3px rgba(85, 85, 85, 0.3);
 }
+
+#airport-map {
+  height: 300px;
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-popup-content {
+  font-size: 14px;
+}
+
+.leaflet-popup-content h4 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  font-weight: bold;
+}

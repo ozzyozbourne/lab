@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+    let airportMap = null;
     const countrySelect = document.getElementById('country-select');
     const airlineSelect = document.getElementById('airline-select');
     const airportSelect = document.getElementById('airport-select');
@@ -179,10 +179,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
             displayAirportDetails(airportData);
             displayWeatherInfo(airportData);
+            displayAirportMap(airportData);
         } catch (error) {
             document.getElementById('airport-info').innerHTML = `Error: ${error.message}`;
             document.getElementById('weather-info').innerHTML = `Error: ${error.message}`;
         }
+    }
+
+    // Function to display the airport on a map
+    function displayAirportMap(airport) {
+        // If map container exists
+        const mapContainer = document.getElementById('airport-map');
+        if (!mapContainer) return;
+
+        // If map is already initialized, remove it first
+        if (airportMap) {
+            airportMap.remove();
+            airportMap = null;
+        }
+
+        // Check if we have valid coordinates
+        if (!airport.latitude || !airport.longitude) {
+            mapContainer.innerHTML = '<p>Map coordinates not available</p>';
+            return;
+        }
+
+        // Initialize map
+        airportMap = L.map('airport-map').setView([airport.latitude, airport.longitude], 12);
+
+        // Add the OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(airportMap);
+
+        // Add a marker for the airport
+        const marker = L.marker([airport.latitude, airport.longitude]).addTo(airportMap);
+
+        // Add a popup with airport information
+        marker.bindPopup(`
+        <h4>${airport.name} (${airport.iata})</h4>
+        <p>${airport.city}, ${airport.country}</p>
+    `).openPopup();
+
+        // Force map to recalculate its size (helps with display issues)
+        setTimeout(() => {
+            airportMap.invalidateSize();
+        }, 100);
     }
 
     function displayAirportDetails(airport) {
