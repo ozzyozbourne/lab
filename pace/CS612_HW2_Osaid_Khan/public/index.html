@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Airline Information System</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Airline Information System</h1>
+    </header>
+    <main>
+      <!-- Country Selection Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <input
+            type="text"
+            id="country-select"
+            placeholder="Enter a country name"
+          />
+          <button id="load-country-data">View Airlines & Airports</button>
+        </div>
+        <div class="results-container">
+          <div class="results-column">
+            <h2>Airlines</h2>
+            <ul id="airlines-list"></ul>
+          </div>
+          <div class="results-column">
+            <h2>Airports</h2>
+            <ul id="airports-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Airline Selection Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <input
+            type="text"
+            id="airline-select"
+            placeholder="Enter an airline name"
+          />
+          <button id="load-airline-data">View Routes</button>
+        </div>
+        <div class="results-container">
+          <div class="results-column">
+            <h2>Airline Airports</h2>
+            <ul id="airline-airports-list"></ul>
+          </div>
+          <div class="results-column">
+            <h2>Airline Routes</h2>
+            <ul id="airline-routes-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Airport Selection Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <input
+            type="text"
+            id="airport-select"
+            placeholder="Enter an airport code or name"
+          />
+          <button id="load-airport-data">View Details</button>
+        </div>
+        <div class="results-container">
+          <div class="results-column">
+            <h2>Airport Information</h2>
+            <div id="airport-info"></div>
+          </div>
+          <div class="results-column">
+            <h2>Weather Information</h2>
+            <div id="weather-info"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Airport Routes Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <input
+            type="text"
+            id="route-airport-select"
+            placeholder="Enter an airport code or name"
+          />
+          <div class="button-group">
+            <button id="load-departures">View Departing Routes</button>
+            <button id="load-arrivals">View Arriving Routes</button>
+            <button id="load-airlines">View Airlines</button>
+          </div>
+        </div>
+        <div class="results-container">
+          <h2 id="routes-title">Routes</h2>
+          <ul id="routes-list"></ul>
+        </div>
+      </section>
+
+      <!-- Routes Between Airports Section -->
+      <section class="search-section">
+        <div class="multi-select">
+          <div>
+            <label for="departure-airport">Departure:</label>
+            <input
+              type="text"
+              id="departure-airport"
+              placeholder="Enter departure airport"
+            />
+          </div>
+          <div>
+            <label for="arrival-airport">Arrival:</label>
+            <input
+              type="text"
+              id="arrival-airport"
+              placeholder="Enter arrival airport"
+            />
+          </div>
+          <div class="button-group">
+            <button id="find-airlines">Find Airlines</button>
+            <button id="calculate-distance">Calculate Distance</button>
+          </div>
+        </div>
+        <div class="results-container">
+          <h2 id="between-title">Connection Information</h2>
+          <div id="between-content"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+Authentication := to check if you are valid user or not  
+
+Authorization  := to check if you are valid to access a particular resource 
+
+identity can also be a machine, hence in machine to machine communication identity is also needed to be verified
+
+Authorization is one step afer Authentication
