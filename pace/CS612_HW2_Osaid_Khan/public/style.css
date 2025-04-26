@@ -11,7 +11,7 @@ body {
   line-height: 1.6;
 }
 header {
-  background-color: #444444; /* Changed from blue to grey */
+  background-color: #444444;
   color: white;
   padding: 20px 0;
   text-align: center;
@@ -32,13 +32,13 @@ main {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 h2 {
-  color: #555555; /* Changed from blue to grey */
+  color: #555555;
   margin-bottom: 20px;
   border-bottom: 1px solid #e1e5e9;
   padding-bottom: 10px;
 }
 h3 {
-  color: #555555; /* Changed from blue to grey */
+  color: #555555;
   margin-bottom: 15px;
 }
 /* Form Elements */
@@ -56,26 +56,30 @@ h3 {
 .multi-select div {
   flex: 1;
 }
-input[type="text"], /* Changed from select to input */
+select,
 button {
   padding: 12px;
   border-radius: 4px;
   border: 1px solid #ddd;
 }
-input[type="text"] {
-  /* Changed from select to input */
+select {
   width: 100%;
   background-color: white;
+  appearance: none; /* Removes default browser styling */
+  background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
 }
 button {
-  background-color: #555555; /* Changed from blue to grey */
+  background-color: #555555;
   color: white;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 button:hover {
-  background-color: #777777; /* Changed from blue to grey */
+  background-color: #777777;
 }
 .button-group {
   display: flex;
@@ -129,14 +133,71 @@ button:hover {
   width: 120px;
 }
 .weather-highlight {
-  color: #e74c3c; /* Kept red for highlighting */
+  color: #e74c3c;
   font-weight: bold;
 }
+
+/* Table Styling - Added to fix formatting issues */
+.airline-info-table,
+.routes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
+.airline-info-table caption,
+.routes-table caption {
+  font-weight: bold;
+  font-size: 1.2em;
+  padding: 10px;
+  text-align: left;
+  color: #555555;
+}
+
+.airline-info-table th,
+.routes-table th {
+  background-color: #f2f2f2;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  color: #555555;
+}
+
+.airline-info-table td,
+.routes-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  vertical-align: top;
+}
+
+.routes-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.routes-table tbody tr:hover,
+.airline-info-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Make tables responsive */
+@media (max-width: 768px) {
+  .airline-info-table,
+  .routes-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
 /* Footer */
 footer {
   text-align: center;
   padding: 20px;
-  background-color: #444444; /* Changed from blue to grey */
+  background-color: #444444;
   color: white;
   margin-top: 20px;
 }
@@ -152,10 +213,9 @@ footer {
     flex-direction: column;
   }
 }
-
-/* Additional styles for input focus state */
-input[type="text"]:focus {
+/* Additional styles for select focus state */
+select:focus {
   outline: none;
-  border-color: #777777; /* Grey color for focus state */
+  border-color: #777777;
   box-shadow: 0 0 3px rgba(85, 85, 85, 0.3);
 }

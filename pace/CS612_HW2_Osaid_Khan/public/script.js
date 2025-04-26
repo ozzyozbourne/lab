@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const baseUrl = '/';
 
-    const countryInput = document.getElementById('country-select');
-    const airlineInput = document.getElementById('airline-select');
-    const airportInput = document.getElementById('airport-select');
-    const routeAirportInput = document.getElementById('route-airport-select');
-    const departureAirportInput = document.getElementById('departure-airport');
-    const arrivalAirportInput = document.getElementById('arrival-airport');
+    const countrySelect = document.getElementById('country-select');
+    const airlineSelect = document.getElementById('airline-select');
+    const airportSelect = document.getElementById('airport-select');
+    const routeAirportSelect = document.getElementById('route-airport-select');
+    const departureAirportSelect = document.getElementById('departure-airport');
+    const arrivalAirportSelect = document.getElementById('arrival-airport');
 
     setupEventListeners();
 
@@ -21,23 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('calculate-distance').addEventListener('click', calculateDistance);
     }
 
-    function getAirportCode(airportInput) {
-        const match = airportInput.match(/\(([A-Z]{3})\)$/);
-        if (match) return match[1];
-        if (/^[A-Z]{3}$/.test(airportInput)) return airportInput;
-        return airportInput;
-    }
 
     async function loadCountryData() {
-        const countryCode = countryInput.value.trim();
+        const countryCode = countrySelect.value;
         if (!countryCode) {
-            alert('Please enter a country');
+            alert('Please select a country');
             return;
         }
         const airlinesList = document.getElementById('airlines-list');
         const airportsList = document.getElementById('airports-list');
         try {
-
             const airlines = await fetchData(`/airlines?country=${countryCode}`);
             const airports = await fetchData(`/airports?country=${countryCode}`);
 
@@ -72,9 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadAirlineData() {
-        const airlineCode = airlineInput.value.trim();
+        const airlineCode = airlineSelect.value;
         if (!airlineCode) {
-            alert('Please enter an airline code (e.g., AA for American Airlines)');
+            alert('Please select an airline');
             return;
         }
         const routeList = document.getElementById('airline-routes-list');
@@ -84,19 +76,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const routeData = await fetchData(`/airline/routes?code=${airlineCode}`);
             routeList.innerHTML = '';
 
-            // Create container for tables
             const tablesContainer = document.createElement('div');
 
-            // Create airline info table
             const airlineTable = document.createElement('table');
             airlineTable.className = 'airline-info-table';
 
-            // Add airline table caption
             const airlineCaption = document.createElement('caption');
             airlineCaption.textContent = 'Airline Information';
             airlineTable.appendChild(airlineCaption);
 
-            // Create header row
             let headerRow = document.createElement('tr');
             for (const key in routeData.airline) {
                 const th = document.createElement('th');
@@ -105,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             airlineTable.appendChild(headerRow);
 
-            // Create data row
             const dataRow = document.createElement('tr');
             for (const key in routeData.airline) {
                 const td = document.createElement('td');
@@ -114,23 +101,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             airlineTable.appendChild(dataRow);
 
-            // Add airline table to container
             tablesContainer.appendChild(airlineTable);
 
-            // Create routes table
             const routesTable = document.createElement('table');
             routesTable.className = 'routes-table';
 
-            // Add routes table caption
             const routesCaption = document.createElement('caption');
             routesCaption.textContent = 'Routes';
             routesTable.appendChild(routesCaption);
 
-            // Create routes table header
             const routesHeader = document.createElement('thead');
             headerRow = document.createElement('tr');
 
-            // Define the columns we want to show in the routes table
             const routeColumns = [
                 { key: 'departure_code', label: 'From' },
                 { key: 'arrival_code', label: 'To' },
@@ -139,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 { key: 'planes', label: 'Aircraft' }
             ];
 
-            // Create header cells
             routeColumns.forEach(column => {
                 const th = document.createElement('th');
                 th.textContent = column.label;
@@ -149,17 +130,14 @@ document.addEventListener('DOMContentLoaded', function() {
             routesHeader.appendChild(headerRow);
             routesTable.appendChild(routesHeader);
 
-            // Create routes table body
             const routesBody = document.createElement('tbody');
 
-            // Add rows for each route
             routeData.routes.forEach(route => {
                 const row = document.createElement('tr');
 
                 routeColumns.forEach(column => {
                     const td = document.createElement('td');
 
-                    // Special handling for departure/arrival airport cells to include city and country
                     if (column.key === 'departure_airport') {
                         td.textContent = `${route.departure_airport}, ${route.departure_city}, ${route.departure_country}`;
                     }
@@ -178,10 +156,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             routesTable.appendChild(routesBody);
 
-            // Add routes table to container
             tablesContainer.appendChild(routesTable);
 
-            // Add tables container to the page
             routeList.appendChild(tablesContainer);
 
         } catch (error) {
@@ -190,9 +166,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadAirportData() {
-        const airportValue = airportInput.value.trim();
-        if (!airportValue) {
-            alert('Please enter an airport');
+        const airportCode = airportSelect.value;
+        if (!airportCode) {
+            alert('Please select an airport');
             return;
         }
 
@@ -200,10 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('airport-info').innerHTML = 'Loading...';
             document.getElementById('weather-info').innerHTML = 'Loading...';
 
-            // Use the input or extracted code
-            const airportCode = getAirportCode(airportValue);
-
-            const airportData = await fetchData(`/ airport ? iata = ${airportCode}`);
+            const airportData = await fetchData(`/airport?iata=${airportCode}`);
 
             displayAirportDetails(airportData);
             displayWeatherInfo(airportData);
@@ -217,34 +190,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const airportInfo = document.getElementById('airport-info');
 
         const details = `
-        < div class= "detail-row" >
-                <span class="detail-label">Name:</span>
-                <span>${airport.name}</span>
-            </div >
-            <div class="detail-row">
-                <span class="detail-label">City:</span>
-                <span>${airport.city}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Country:</span>
-                <span>${airport.country}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">IATA Code:</span>
-                <span>${airport.iata}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">ICAO Code:</span>
-                <span>${airport.icao}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Latitude:</span>
-                <span>${airport.latitude}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Longitude:</span>
-                <span>${airport.longitude}</span>
-            </div>
+        <div class="detail-row">
+            <span class="detail-label">Name:</span>
+            <span>${airport.name}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">City:</span>
+            <span>${airport.city}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Country:</span>
+            <span>${airport.country}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">IATA Code:</span>
+            <span>${airport.iata}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">ICAO Code:</span>
+            <span>${airport.icao}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Latitude:</span>
+            <span>${airport.latitude}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Longitude:</span>
+            <span>${airport.longitude}</span>
+        </div>
         `;
 
         airportInfo.innerHTML = details;
@@ -255,10 +228,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (airport.high && airport.low) {
             const weather = `
-            < div class= "detail-row" >
-                    <span class="detail-label">Today's High:</span>
-                    <span class="weather-highlight">${airport.high}°C</span>
-                </div >
+            <div class="detail-row">
+                <span class="detail-label">Today's High:</span>
+                <span class="weather-highlight">${airport.high}°C</span>
+            </div>
             <div class="detail-row">
                 <span class="detail-label">Today's Low:</span>
                 <span class="weather-highlight">${airport.low}°C</span>
@@ -271,37 +244,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadDepartingRoutes() {
-        const airportValue = routeAirportInput.value.trim();
-        if (!airportValue) {
-            alert('Please enter an airport');
+        const airportCode = routeAirportSelect.value;
+        if (!airportCode) {
+            alert('Please select an airport');
             return;
         }
 
         try {
-            // Use the input or extracted code
-            const airportCode = getAirportCode(airportValue);
-
             document.getElementById('routes-title').textContent = `Departing Routes from ${airportCode}`;
             document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
 
-            const routes = await fetchData(`/ routes / arrivals ? departure = ${airportCode}`);
+            const routes = await fetchData(`/routes/departures?airport=${airportCode}`);
             displayRoutes(routes);
         } catch (error) {
-            document.getElementById('routes-list').innerHTML = `< li > Error: ${error.message}</li > `;
+            document.getElementById('routes-list').innerHTML = `<li>Error: ${error.message}</li>`;
         }
     }
 
     async function loadArrivingRoutes() {
-        const airportValue = routeAirportInput.value.trim();
-        if (!airportValue) {
-            alert('Please enter an airport');
+        const airportCode = routeAirportSelect.value;
+        if (!airportCode) {
+            alert('Please select an airport');
             return;
         }
 
         try {
-            // Use the input or extracted code
-            const airportCode = getAirportCode(airportValue);
-
             document.getElementById('routes-title').textContent = `Arriving Routes to ${airportCode}`;
             document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
 
@@ -309,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<li>API limitation: There is no direct endpoint to get arriving routes.</li>' +
                 '<li>In a complete implementation, we would need to query all routes and filter by arrival.</li>';
         } catch (error) {
-            document.getElementById('routes-list').innerHTML = `< li > Error: ${error.message}</li > `;
+            document.getElementById('routes-list').innerHTML = `<li>Error: ${error.message}</li>`;
         }
     }
 
@@ -330,41 +297,35 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadAirportAirlines() {
-        const airportValue = routeAirportInput.value.trim();
-        if (!airportValue) {
-            alert('Please enter an airport');
+        const airportCode = routeAirportSelect.value;
+        if (!airportCode) {
+            alert('Please select an airport');
             return;
         }
 
         try {
-            // Use the input or extracted code
-            const airportCode = getAirportCode(airportValue);
-
-            document.getElementById('routes-title').textContent = `Airlines Flying To / From ${airportCode}`;
+            document.getElementById('routes-title').textContent = `Airlines Flying To/From ${airportCode}`;
             document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
 
             document.getElementById('routes-list').innerHTML =
                 '<li>API limitation: There is no direct endpoint to get airlines by airport.</li>' +
                 '<li>In a complete implementation, we would need to query all routes and extract unique airlines.</li>';
         } catch (error) {
-            document.getElementById('routes-list').innerHTML = `< li > Error: ${error.message}</li > `;
+            document.getElementById('routes-list').innerHTML = `<li>Error: ${error.message}</li>`;
         }
     }
 
     async function findAirlinesBetweenAirports() {
-        const departureValue = departureAirportInput.value.trim();
-        const arrivalValue = arrivalAirportInput.value.trim();
+        const departureCode = departureAirportSelect.value;
+        const arrivalCode = arrivalAirportSelect.value;
 
-        if (!departureValue || !arrivalValue) {
-            alert('Please enter both departure and arrival airports');
+        if (!departureCode || !arrivalCode) {
+            alert('Please select both departure and arrival airports');
             return;
         }
 
-        const departureCode = getAirportCode(departureValue);
-        const arrivalCode = getAirportCode(arrivalValue);
-
         if (departureCode === arrivalCode) {
-            alert('Please enter different airports for departure and arrival');
+            alert('Please select different airports for departure and arrival');
             return;
         }
 
@@ -372,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('between-title').textContent = `Airlines Flying from ${departureCode} to ${arrivalCode}`;
             document.getElementById('between-content').innerHTML = 'Loading...';
 
-            const routeData = await fetchData(`/ routes ? departure = ${departureCode} & arrival=${arrivalCode}`);
+            const routeData = await fetchData(`/routes?departure=${departureCode}&arrival=${arrivalCode}`);
             displayAirlinesBetweenAirports(routeData);
         } catch (error) {
             document.getElementById('between-content').innerHTML = `Error: ${error.message}`;
@@ -387,11 +348,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        let html = `< p > <strong>Distance:</strong> ${routeData.distance} ${routeData.unit}</p > `;
+        let html = `<p><strong>Distance:</strong> ${routeData.distance} ${routeData.unit}</p>`;
         html += '<ul class="data-list">';
 
         routeData.routes.forEach(route => {
-            html += `< li > <strong>${route.airline.trim()}</strong> - Aircraft: ${route.aircraft_types.join(', ')}</li > `;
+            html += `<li><strong>${route.airline.trim()}</strong> - Aircraft: ${route.aircraft_types.join(', ')}</li>`;
         });
 
         html += '</ul>';
@@ -399,19 +360,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function calculateDistance() {
-        const departureValue = departureAirportInput.value.trim();
-        const arrivalValue = arrivalAirportInput.value.trim();
+        const departureCode = departureAirportSelect.value;
+        const arrivalCode = arrivalAirportSelect.value;
 
-        if (!departureValue || !arrivalValue) {
-            alert('Please enter both departure and arrival airports');
+        if (!departureCode || !arrivalCode) {
+            alert('Please select both departure and arrival airports');
             return;
         }
 
-        const departureCode = getAirportCode(departureValue);
-        const arrivalCode = getAirportCode(arrivalValue);
-
         if (departureCode === arrivalCode) {
-            alert('Please enter different airports for departure and arrival');
+            alert('Please select different airports for departure and arrival');
             return;
         }
 
@@ -419,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('between-title').textContent = `Distance from ${departureCode} to ${arrivalCode}`;
             document.getElementById('between-content').innerHTML = 'Calculating...';
 
-            const routeData = await fetchData(`/ routes ? departure = ${departureCode} & arrival=${arrivalCode}`);
+            const routeData = await fetchData(`/routes?departure=${departureCode}&arrival=${arrivalCode}`);
             displayDistance(routeData);
         } catch (error) {
             document.getElementById('between-content').innerHTML = `Error: ${error.message}`;
@@ -433,18 +391,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const arrivalInfo = `${routeData.arrival.name}(${routeData.arrival.code})`;
 
         const html = `
-        < div class= "detail-row" >
-                <span class="detail-label">From:</span>
-                <span>${departureInfo}</span>
-            </div >
-            <div class="detail-row">
-                <span class="detail-label">To:</span>
-                <span>${arrivalInfo}</span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Distance:</span>
-                <span class="weather-highlight">${routeData.distance} ${routeData.unit}</span>
-            </div>
+        <div class="detail-row">
+            <span class="detail-label">From:</span>
+            <span>${departureInfo}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">To:</span>
+            <span>${arrivalInfo}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Distance:</span>
+            <span class="weather-highlight">${routeData.distance} ${routeData.unit}</span>
+        </div>
         `;
 
         contentDiv.innerHTML = html;
@@ -452,10 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function fetchData(endpoint) {
         try {
-            const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
-            const url = `${baseUrl}${cleanEndpoint}`;
-
-            const response = await fetch(url);
+            const response = await fetch(endpoint);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
