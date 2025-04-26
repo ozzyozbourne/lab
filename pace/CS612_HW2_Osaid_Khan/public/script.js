@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            document.getElementById('routes-title').textContent = `Airlines Flying To/From ${airportCode}`;
+            document.getElementById('routes-title').textContent = `Airlines Flying From ${airportCode}`;
             document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
 
             const airlines = await fetchData(`/airport/airlines?airport=${airportCode}`);

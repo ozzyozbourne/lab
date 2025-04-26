@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Airline Information System</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <!-- Leaflet JavaScript -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+  </head>
+
+  <body>
+    <header>
+      <h1>Airline Information System</h1>
+    </header>
+    <main>
+      <!-- Country Selection Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <select id="country-select">
+            <option value="">Select a country</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="IT">Italy</option>
+            <option value="ES">Spain</option>
+            <option value="AU">Australia</option>
+            <option value="NL">Netherlands</option>
+            <option value="SE">Sweden</option>
+            <option value="CH">Switzerland</option>
+            <option value="BE">Belgium</option>
+            <option value="AT">Austria</option>
+            <option value="IE">Ireland</option>
+            <option value="NZ">New Zealand</option>
+            <option value="CN">China</option>
+            <option value="IN">India</option>
+            <option value="JP">Japan</option>
+            <option value="KR">South Korea</option>
+            <option value="SG">Singapore</option>
+            <option value="TH">Thailand</option>
+            <option value="MY">Malaysia</option>
+            <option value="ID">Indonesia</option>
+            <option value="VN">Vietnam</option>
+            <option value="PH">Philippines</option>
+            <option value="SA">Saudi Arabia</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="TW">Taiwan</option>
+            <option value="BR">Brazil</option>
+            <option value="RU">Russia</option>
+            <option value="MX">Mexico</option>
+            <option value="ZA">South Africa</option>
+            <option value="AR">Argentina</option>
+            <option value="NG">Nigeria</option>
+            <option value="EG">Egypt</option>
+            <option value="CL">Chile</option>
+            <option value="TR">Turkey</option>
+            <option value="PE">Peru</option>
+          </select>
+          <button id="load-country-data">
+            View Airlines & Airports <span class="indicator">▼</span>
+          </button>
+        </div>
+        <div class="results-container section-content" id="country-results">
+          <div class="results-column">
+            <h2>Airlines</h2>
+            <ul id="airlines-list"></ul>
+          </div>
+          <div class="results-column">
+            <h2>Airports</h2>
+            <ul id="airports-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Airline Selection Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <select id="airline-select">
+            <option value="">Select an airline</option>
+            <option value="AA">American Airlines</option>
+            <option value="DL">Delta Air Lines</option>
+            <option value="UA">United Airlines</option>
+            <option value="WN">Southwest Airlines</option>
+            <option value="AS">Alaska Airlines</option>
+            <option value="B6">JetBlue Airways</option>
+            <option value="F9">Frontier Airlines</option>
+            <option value="NK">Spirit Airlines</option>
+            <option value="WS">WestJet</option>
+            <option value="AC">Air Canada</option>
+            <option value="TS">Air Transat</option>
+            <option value="PD">Porter Airlines</option>
+            <option value="BA">British Airways</option>
+            <option value="LH">Lufthansa</option>
+            <option value="AF">Air France</option>
+            <option value="KL">KLM Royal Dutch Airlines</option>
+            <option value="IB">Iberia</option>
+            <option value="FR">Ryanair</option>
+            <option value="W6">Wizz Air</option>
+            <option value="U2">easyJet</option>
+            <option value="SN">Brussels Airlines</option>
+            <option value="OS">Austrian Airlines</option>
+            <option value="LX">Swiss International Air Lines</option>
+            <option value="SK">Scandinavian Airlines System (SAS)</option>
+            <option value="DY">Norwegian Air Shuttle</option>
+            <option value="SQ">Singapore Airlines</option>
+            <option value="CX">Cathay Pacific</option>
+            <option value="JL">Japan Airlines</option>
+            <option value="NH">All Nippon Airways</option>
+            <option value="KE">Korean Air</option>
+            <option value="OZ">Asiana Airlines</option>
+            <option value="BR">EVA Air</option>
+            <option value="CI">China Airlines</option>
+            <option value="MU">China Eastern Airlines</option>
+            <option value="CZ">China Southern Airlines</option>
+            <option value="QR">Qatar Airways</option>
+            <option value="EK">Emirates</option>
+            <option value="EY">Etihad Airways</option>
+            <option value="TG">Thai Airways International</option>
+            <option value="MH">Malaysia Airlines</option>
+            <option value="AI">Air India</option>
+            <option value="CA">Air China</option>
+            <option value="GA">Garuda Indonesia</option>
+            <option value="SV">Saudi Arabian Airlines</option>
+            <option value="RJ">Royal Jordanian</option>
+            <option value="BI">Royal Brunei Airlines</option>
+            <option value="TK">Turkish Airlines</option>
+          </select>
+          <button id="load-airline-data">
+            View Routes <span class="indicator">▼</span>
+          </button>
+        </div>
+        <div class="results-container section-content" id="airline-results">
+          <div class="results-column">
+            <h2>Airports And Routes Info</h2>
+            <ul id="airline-routes-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Airport Selection Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <select id="airport-select">
+            <option value="">Select an airport</option>
+            <option value="ATL">
+              Atlanta Hartsfield–Jackson International Airport
+            </option>
+            <option value="LAX">
+              Los Angeles Los Angeles International Airport
+            </option>
+            <option value="ORD">
+              Chicago Chicago O'Hare International Airport
+            </option>
+            <option value="DFW">
+              Dallas Dallas/Fort Worth International Airport
+            </option>
+            <option value="DEN">Denver Denver International Airport</option>
+            <option value="JFK">
+              New York John F Kennedy International Airport
+            </option>
+            <option value="SFO">
+              San Francisco San Francisco International Airport
+            </option>
+            <option value="SEA">
+              Seattle Seattle–Tacoma International Airport
+            </option>
+            <option value="LAS">
+              Las Vegas McCarran International Airport
+            </option>
+            <option value="CLT">
+              Charlotte Charlotte Douglas International Airport
+            </option>
+            <option value="MIA">Miami Miami International Airport</option>
+            <option value="PHX">
+              Phoenix Phoenix Sky Harbor International Airport
+            </option>
+            <option value="IAH">
+              Houston George Bush Intercontinental Airport
+            </option>
+            <option value="EWR">
+              Newark Newark Liberty International Airport
+            </option>
+            <option value="MSP">
+              Minneapolis Minneapolis–St Paul International Airport
+            </option>
+            <option value="BOS">Boston Logan International Airport</option>
+            <option value="DTW">
+              Detroit Detroit Metropolitan Wayne County Airport
+            </option>
+            <option value="PHL">
+              Philadelphia Philadelphia International Airport
+            </option>
+            <option value="SAN">
+              San Diego San Diego International Airport
+            </option>
+            <option value="FLL">
+              Fort Lauderdale Fort Lauderdale–Hollywood International Airport
+            </option>
+            <option value="IAD">
+              Washington Washington Dulles International Airport
+            </option>
+            <option value="YYZ">
+              Toronto Toronto Pearson International Airport
+            </option>
+            <option value="YVR">
+              Vancouver Vancouver International Airport
+            </option>
+            <option value="YUL">
+              Montreal Montréal–Trudeau International Airport
+            </option>
+            <option value="MEX">
+              Mexico City Mexico City International Airport
+            </option>
+            <option value="LHR">London Heathrow Airport</option>
+            <option value="CDG">Paris Charles de Gaulle Airport</option>
+            <option value="FRA">Frankfurt Frankfurt Airport</option>
+            <option value="AMS">Amsterdam Schiphol Airport</option>
+            <option value="MAD">
+              Madrid Adolfo Suárez Madrid–Barajas Airport
+            </option>
+            <option value="BCN">Barcelona Barcelona–El Prat Airport</option>
+            <option value="FCO">
+              Rome Leonardo da Vinci–Fiumicino Airport
+            </option>
+            <option value="MUC">Munich Munich Airport</option>
+            <option value="LGW">London Gatwick Airport</option>
+            <option value="ZRH">Zurich Zurich Airport</option>
+            <option value="DUB">Dublin Dublin Airport</option>
+            <option value="ARN">Stockholm Stockholm Arlanda Airport</option>
+            <option value="CPH">Copenhagen Copenhagen Airport</option>
+            <option value="VIE">Vienna Vienna International Airport</option>
+            <option value="BRU">Brussels Brussels Airport</option>
+            <option value="SYD">Sydney Sydney Kingsford Smith Airport</option>
+            <option value="MEL">Melbourne Melbourne Airport</option>
+            <option value="BNE">Brisbane Brisbane Airport</option>
+            <option value="AKL">Auckland Auckland International Airport</option>
+            <option value="PER">Perth Perth Airport</option>
+            <option value="CHC">
+              Christchurch Christchurch International Airport
+            </option>
+            <option value="ADL">Adelaide Adelaide Airport</option>
+            <option value="CBR">Canberra Canberra Airport</option>
+            <option value="OOL">Gold Coast Coolangatta Airport</option>
+            <option value="HBA">Hobart Hobart International Airport</option>
+            <option value="PEK">Beijing Capital International Airport</option>
+            <option value="PVG">Shanghai Pudong International Airport</option>
+            <option value="CAN">Guangzhou Baiyun International Airport</option>
+            <option value="HKG">Hong Kong International Airport</option>
+            <option value="NRT">Tokyo Narita International Airport</option>
+            <option value="HND">Tokyo Haneda International Airport</option>
+            <option value="ICN">Seoul Incheon International Airport</option>
+            <option value="DEL">
+              Delhi Indira Gandhi International Airport
+            </option>
+            <option value="BKK">Bangkok Suvarnabhumi Airport</option>
+            <option value="SIN">Singapore Changi Airport</option>
+            <option value="KUL">Kuala Lumpur International Airport</option>
+            <option value="CGK">
+              Jakarta Soekarno–Hatta International Airport
+            </option>
+            <option value="MNL">
+              Manila Ninoy Aquino International Airport
+            </option>
+            <option value="BOM">
+              Mumbai Chhatrapati Shivaji Maharaj International Airport
+            </option>
+            <option value="DXB">Dubai International Airport</option>
+            <option value="CTU">Chengdu Shuangliu International Airport</option>
+            <option value="TPE">Taipei Taoyuan International Airport</option>
+            <option value="SZX">Shenzhen Bao'an International Airport</option>
+            <option value="CKG">
+              Chongqing Jiangbei International Airport
+            </option>
+            <option value="XIY">Xi’an Xianyang International Airport</option>
+            <option value="HGH">Hangzhou Xiaoshan International Airport</option>
+            <option value="FUK">Fukuoka Airport</option>
+            <option value="KIX">Osaka Kansai International Airport</option>
+            <option value="NGO">
+              Nagoya Chubu Centrair International Airport
+            </option>
+            <option value="CTS">Sapporo New Chitose Airport</option>
+            <option value="DPS">
+              Denpasar Ngurah Rai International Airport
+            </option>
+            <option value="SGN">
+              Ho Chi Minh City Tan Son Nhat International Airport
+            </option>
+            <option value="MCT">Muscat International Airport</option>
+            <option value="DOH">Doha Hamad International Airport</option>
+            <option value="AUH">Abu Dhabi International Airport</option>
+            <option value="JED">
+              Jeddah King Abdulaziz International Airport
+            </option>
+            <option value="RUH">
+              Riyadh King Khalid International Airport
+            </option>
+            <option value="AMM">Amman Queen Alia International Airport</option>
+            <option value="TLV">Tel Aviv Ben Gurion Airport</option>
+            <option value="SHA">Shanghai Hongqiao International Airport</option>
+            <option value="NKG">Nanjing Lukou International Airport</option>
+            <option value="WUH">Wuhan Tianhe International Airport</option>
+            <option value="SHE">Shenyang Taoxian International Airport</option>
+            <option value="CEB">Cebu Mactan–Cebu International Airport</option>
+            <option value="KHI">Karachi Jinnah International Airport</option>
+            <option value="DAC">Dhaka Shahjalal International Airport</option>
+            <option value="CMB">
+              Colombo Bandaranaike International Airport
+            </option>
+            <option value="KTM">
+              Kathmandu Tribhuvan International Airport
+            </option>
+            <option value="BWN">
+              Bandar Seri Begawan Brunei International Airport
+            </option>
+            <option value="LHE">
+              Lahore Allama Iqbal International Airport
+            </option>
+            <option value="ALA">Almaty International Airport</option>
+            <option value="BAH">Bahrain International Airport</option>
+            <option value="MLE">Malé Velana International Airport</option>
+            <option value="ULN">
+              Ulaanbaatar Chinggis Khaan International Airport
+            </option>
+          </select>
+
+          <button id="load-airport-data">
+            View Details <span class="indicator">▼</span>
+          </button>
+        </div>
+        <div class="results-container section-content" id="airport-results">
+          <div class="results-column">
+            <h2>Airport Information</h2>
+            <div id="airport-info"></div>
+            <div id="airport-map"></div>
+          </div>
+          <div class="results-column">
+            <h2>Weather Information</h2>
+            <div id="weather-info"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Airport Routes Section -->
+      <section class="search-section">
+        <div class="form-group">
+          <select id="airport-select-route">
+            <option value="">Select an airport</option>
+            <option value="ATL">
+              Atlanta Hartsfield–Jackson International Airport
+            </option>
+            <option value="LAX">
+              Los Angeles Los Angeles International Airport
+            </option>
+            <option value="ORD">
+              Chicago Chicago O'Hare International Airport
+            </option>
+            <option value="DFW">
+              Dallas Dallas/Fort Worth International Airport
+            </option>
+            <option value="DEN">Denver Denver International Airport</option>
+            <option value="JFK">
+              New York John F Kennedy International Airport
+            </option>
+            <option value="SFO">
+              San Francisco San Francisco International Airport
+            </option>
+            <option value="SEA">
+              Seattle Seattle–Tacoma International Airport
+            </option>
+            <option value="LAS">
+              Las Vegas McCarran International Airport
+            </option>
+            <option value="CLT">
+              Charlotte Charlotte Douglas International Airport
+            </option>
+            <option value="MIA">Miami Miami International Airport</option>
+            <option value="PHX">
+              Phoenix Phoenix Sky Harbor International Airport
+            </option>
+            <option value="IAH">
+              Houston George Bush Intercontinental Airport
+            </option>
+            <option value="EWR">
+              Newark Newark Liberty International Airport
+            </option>
+            <option value="MSP">
+              Minneapolis Minneapolis–St Paul International Airport
+            </option>
+            <option value="BOS">Boston Logan International Airport</option>
+            <option value="DTW">
+              Detroit Detroit Metropolitan Wayne County Airport
+            </option>
+            <option value="PHL">
+              Philadelphia Philadelphia International Airport
+            </option>
+            <option value="SAN">
+              San Diego San Diego International Airport
+            </option>
+            <option value="FLL">
+              Fort Lauderdale Fort Lauderdale–Hollywood International Airport
+            </option>
+            <option value="IAD">
+              Washington Washington Dulles International Airport
+            </option>
+            <option value="YYZ">
+              Toronto Toronto Pearson International Airport
+            </option>
+            <option value="YVR">
+              Vancouver Vancouver International Airport
+            </option>
+            <option value="YUL">
+              Montreal Montréal–Trudeau International Airport
+            </option>
+            <option value="MEX">
+              Mexico City Mexico City International Airport
+            </option>
+            <option value="LHR">London Heathrow Airport</option>
+            <option value="CDG">Paris Charles de Gaulle Airport</option>
+            <option value="FRA">Frankfurt Frankfurt Airport</option>
+            <option value="AMS">Amsterdam Schiphol Airport</option>
+            <option value="MAD">
+              Madrid Adolfo Suárez Madrid–Barajas Airport
+            </option>
+            <option value="BCN">Barcelona Barcelona–El Prat Airport</option>
+            <option value="FCO">
+              Rome Leonardo da Vinci–Fiumicino Airport
+            </option>
+            <option value="MUC">Munich Munich Airport</option>
+            <option value="LGW">London Gatwick Airport</option>
+            <option value="ZRH">Zurich Zurich Airport</option>
+            <option value="DUB">Dublin Dublin Airport</option>
+            <option value="ARN">Stockholm Stockholm Arlanda Airport</option>
+            <option value="CPH">Copenhagen Copenhagen Airport</option>
+            <option value="VIE">Vienna Vienna International Airport</option>
+            <option value="BRU">Brussels Brussels Airport</option>
+            <option value="SYD">Sydney Sydney Kingsford Smith Airport</option>
+            <option value="MEL">Melbourne Melbourne Airport</option>
+            <option value="BNE">Brisbane Brisbane Airport</option>
+            <option value="AKL">Auckland Auckland International Airport</option>
+            <option value="PER">Perth Perth Airport</option>
+            <option value="CHC">
+              Christchurch Christchurch International Airport
+            </option>
+            <option value="ADL">Adelaide Adelaide Airport</option>
+            <option value="CBR">Canberra Canberra Airport</option>
+            <option value="OOL">Gold Coast Coolangatta Airport</option>
+            <option value="HBA">Hobart Hobart International Airport</option>
+            <option value="PEK">Beijing Capital International Airport</option>
+            <option value="PVG">Shanghai Pudong International Airport</option>
+            <option value="CAN">Guangzhou Baiyun International Airport</option>
+            <option value="HKG">Hong Kong International Airport</option>
+            <option value="NRT">Tokyo Narita International Airport</option>
+            <option value="HND">Tokyo Haneda International Airport</option>
+            <option value="ICN">Seoul Incheon International Airport</option>
+            <option value="DEL">
+              Delhi Indira Gandhi International Airport
+            </option>
+            <option value="BKK">Bangkok Suvarnabhumi Airport</option>
+            <option value="SIN">Singapore Changi Airport</option>
+            <option value="KUL">Kuala Lumpur International Airport</option>
+            <option value="CGK">
+              Jakarta Soekarno–Hatta International Airport
+            </option>
+            <option value="MNL">
+              Manila Ninoy Aquino International Airport
+            </option>
+            <option value="BOM">
+              Mumbai Chhatrapati Shivaji Maharaj International Airport
+            </option>
+            <option value="DXB">Dubai International Airport</option>
+            <option value="CTU">Chengdu Shuangliu International Airport</option>
+            <option value="TPE">Taipei Taoyuan International Airport</option>
+            <option value="SZX">Shenzhen Bao'an International Airport</option>
+            <option value="CKG">
+              Chongqing Jiangbei International Airport
+            </option>
+            <option value="XIY">Xi’an Xianyang International Airport</option>
+            <option value="HGH">Hangzhou Xiaoshan International Airport</option>
+            <option value="FUK">Fukuoka Airport</option>
+            <option value="KIX">Osaka Kansai International Airport</option>
+            <option value="NGO">
+              Nagoya Chubu Centrair International Airport
+            </option>
+            <option value="CTS">Sapporo New Chitose Airport</option>
+            <option value="DPS">
+              Denpasar Ngurah Rai International Airport
+            </option>
+            <option value="SGN">
+              Ho Chi Minh City Tan Son Nhat International Airport
+            </option>
+            <option value="MCT">Muscat International Airport</option>
+            <option value="DOH">Doha Hamad International Airport</option>
+            <option value="AUH">Abu Dhabi International Airport</option>
+            <option value="JED">
+              Jeddah King Abdulaziz International Airport
+            </option>
+            <option value="RUH">
+              Riyadh King Khalid International Airport
+            </option>
+            <option value="AMM">Amman Queen Alia International Airport</option>
+            <option value="TLV">Tel Aviv Ben Gurion Airport</option>
+            <option value="SHA">Shanghai Hongqiao International Airport</option>
+            <option value="NKG">Nanjing Lukou International Airport</option>
+            <option value="WUH">Wuhan Tianhe International Airport</option>
+            <option value="SHE">Shenyang Taoxian International Airport</option>
+            <option value="CEB">Cebu Mactan–Cebu International Airport</option>
+            <option value="KHI">Karachi Jinnah International Airport</option>
+            <option value="DAC">Dhaka Shahjalal International Airport</option>
+            <option value="CMB">
+              Colombo Bandaranaike International Airport
+            </option>
+            <option value="KTM">
+              Kathmandu Tribhuvan International Airport
+            </option>
+            <option value="BWN">
+              Bandar Seri Begawan Brunei International Airport
+            </option>
+            <option value="LHE">
+              Lahore Allama Iqbal International Airport
+            </option>
+            <option value="ALA">Almaty International Airport</option>
+            <option value="BAH">Bahrain International Airport</option>
+            <option value="MLE">Malé Velana International Airport</option>
+            <option value="ULN">
+              Ulaanbaatar Chinggis Khaan International Airport
+            </option>
+          </select>
+          <div class="button-group">
+            <button id="load-departures">
+              View Departing Routes <span class="indicator">▼</span>
+            </button>
+            <button id="load-arrivals">
+              View Arriving Routes <span class="indicator">▼</span>
+            </button>
+            <button id="load-airlines">
+              View Airlines <span class="indicator">▼</span>
+            </button>
+          </div>
+        </div>
+        <div class="results-container section-content" id="routes-results">
+          <h2 id="routes-title">Routes</h2>
+          <ul id="routes-list"></ul>
+        </div>
+      </section>
+
+      <section class="search-section">
+        <div class="multi-select">
+          <div>
+            <label for="departure-airport">Departure:</label>
+            <select id="departure-airport">
+              <option value="">Select an airport</option>
+              <option value="ATL">
+                Atlanta Hartsfield–Jackson International Airport
+              </option>
+              <option value="LAX">
+                Los Angeles Los Angeles International Airport
+              </option>
+              <option value="ORD">
+                Chicago Chicago O'Hare International Airport
+              </option>
+              <option value="DFW">
+                Dallas Dallas/Fort Worth International Airport
+              </option>
+              <option value="DEN">Denver Denver International Airport</option>
+              <option value="JFK">
+                New York John F Kennedy International Airport
+              </option>
+              <option value="SFO">
+                San Francisco San Francisco International Airport
+              </option>
+              <option value="SEA">
+                Seattle Seattle–Tacoma International Airport
+              </option>
+              <option value="LAS">
+                Las Vegas McCarran International Airport
+              </option>
+              <option value="CLT">
+                Charlotte Charlotte Douglas International Airport
+              </option>
+              <option value="MIA">Miami Miami International Airport</option>
+              <option value="PHX">
+                Phoenix Phoenix Sky Harbor International Airport
+              </option>
+              <option value="IAH">
+                Houston George Bush Intercontinental Airport
+              </option>
+              <option value="EWR">
+                Newark Newark Liberty International Airport
+              </option>
+              <option value="MSP">
+                Minneapolis Minneapolis–St Paul International Airport
+              </option>
+              <option value="BOS">Boston Logan International Airport</option>
+              <option value="DTW">
+                Detroit Detroit Metropolitan Wayne County Airport
+              </option>
+              <option value="PHL">
+                Philadelphia Philadelphia International Airport
+              </option>
+              <option value="SAN">
+                San Diego San Diego International Airport
+              </option>
+              <option value="FLL">
+                Fort Lauderdale Fort Lauderdale–Hollywood International Airport
+              </option>
+              <option value="IAD">
+                Washington Washington Dulles International Airport
+              </option>
+              <option value="YYZ">
+                Toronto Toronto Pearson International Airport
+              </option>
+              <option value="YVR">
+                Vancouver Vancouver International Airport
+              </option>
+              <option value="YUL">
+                Montreal Montréal–Trudeau International Airport
+              </option>
+              <option value="MEX">
+                Mexico City Mexico City International Airport
+              </option>
+              <option value="LHR">London Heathrow Airport</option>
+              <option value="CDG">Paris Charles de Gaulle Airport</option>
+              <option value="FRA">Frankfurt Frankfurt Airport</option>
+              <option value="AMS">Amsterdam Schiphol Airport</option>
+              <option value="MAD">
+                Madrid Adolfo Suárez Madrid–Barajas Airport
+              </option>
+              <option value="BCN">Barcelona Barcelona–El Prat Airport</option>
+              <option value="FCO">
+                Rome Leonardo da Vinci–Fiumicino Airport
+              </option>
+              <option value="MUC">Munich Munich Airport</option>
+              <option value="LGW">London Gatwick Airport</option>
+              <option value="ZRH">Zurich Zurich Airport</option>
+              <option value="DUB">Dublin Dublin Airport</option>
+              <option value="ARN">Stockholm Stockholm Arlanda Airport</option>
+              <option value="CPH">Copenhagen Copenhagen Airport</option>
+              <option value="VIE">Vienna Vienna International Airport</option>
+              <option value="BRU">Brussels Brussels Airport</option>
+              <option value="SYD">Sydney Sydney Kingsford Smith Airport</option>
+              <option value="MEL">Melbourne Melbourne Airport</option>
+              <option value="BNE">Brisbane Brisbane Airport</option>
+              <option value="AKL">
+                Auckland Auckland International Airport
+              </option>
+              <option value="PER">Perth Perth Airport</option>
+              <option value="CHC">
+                Christchurch Christchurch International Airport
+              </option>
+              <option value="ADL">Adelaide Adelaide Airport</option>
+              <option value="CBR">Canberra Canberra Airport</option>
+              <option value="OOL">Gold Coast Coolangatta Airport</option>
+              <option value="HBA">Hobart Hobart International Airport</option>
+              <option value="PEK">Beijing Capital International Airport</option>
+              <option value="PVG">Shanghai Pudong International Airport</option>
+              <option value="CAN">
+                Guangzhou Baiyun International Airport
+              </option>
+              <option value="HKG">Hong Kong International Airport</option>
+              <option value="NRT">Tokyo Narita International Airport</option>
+              <option value="HND">Tokyo Haneda International Airport</option>
+              <option value="ICN">Seoul Incheon International Airport</option>
+              <option value="DEL">
+                Delhi Indira Gandhi International Airport
+              </option>
+              <option value="BKK">Bangkok Suvarnabhumi Airport</option>
+              <option value="SIN">Singapore Changi Airport</option>
+              <option value="KUL">Kuala Lumpur International Airport</option>
+              <option value="CGK">
+                Jakarta Soekarno–Hatta International Airport
+              </option>
+              <option value="MNL">
+                Manila Ninoy Aquino International Airport
+              </option>
+              <option value="BOM">
+                Mumbai Chhatrapati Shivaji Maharaj International Airport
+              </option>
+              <option value="DXB">Dubai International Airport</option>
+              <option value="CTU">
+                Chengdu Shuangliu International Airport
+              </option>
+              <option value="TPE">Taipei Taoyuan International Airport</option>
+              <option value="SZX">Shenzhen Bao'an International Airport</option>
+              <option value="CKG">
+                Chongqing Jiangbei International Airport
+              </option>
+              <option value="XIY">Xi’an Xianyang International Airport</option>
+              <option value="HGH">
+                Hangzhou Xiaoshan International Airport
+              </option>
+              <option value="FUK">Fukuoka Airport</option>
+              <option value="KIX">Osaka Kansai International Airport</option>
+              <option value="NGO">
+                Nagoya Chubu Centrair International Airport
+              </option>
+              <option value="CTS">Sapporo New Chitose Airport</option>
+              <option value="DPS">
+                Denpasar Ngurah Rai International Airport
+              </option>
+              <option value="SGN">
+                Ho Chi Minh City Tan Son Nhat International Airport
+              </option>
+              <option value="MCT">Muscat International Airport</option>
+              <option value="DOH">Doha Hamad International Airport</option>
+              <option value="AUH">Abu Dhabi International Airport</option>
+              <option value="JED">
+                Jeddah King Abdulaziz International Airport
+              </option>
+              <option value="RUH">
+                Riyadh King Khalid International Airport
+              </option>
+              <option value="AMM">
+                Amman Queen Alia International Airport
+              </option>
+              <option value="TLV">Tel Aviv Ben Gurion Airport</option>
+              <option value="SHA">
+                Shanghai Hongqiao International Airport
+              </option>
+              <option value="NKG">Nanjing Lukou International Airport</option>
+              <option value="WUH">Wuhan Tianhe International Airport</option>
+              <option value="SHE">
+                Shenyang Taoxian International Airport
+              </option>
+              <option value="CEB">
+                Cebu Mactan–Cebu International Airport
+              </option>
+              <option value="KHI">Karachi Jinnah International Airport</option>
+              <option value="DAC">Dhaka Shahjalal International Airport</option>
+              <option value="CMB">
+                Colombo Bandaranaike International Airport
+              </option>
+              <option value="KTM">
+                Kathmandu Tribhuvan International Airport
+              </option>
+              <option value="BWN">
+                Bandar Seri Begawan Brunei International Airport
+              </option>
+              <option value="LHE">
+                Lahore Allama Iqbal International Airport
+              </option>
+              <option value="ALA">Almaty International Airport</option>
+              <option value="BAH">Bahrain International Airport</option>
+              <option value="MLE">Malé Velana International Airport</option>
+              <option value="ULN">
+                Ulaanbaatar Chinggis Khaan International Airport
+              </option>
+            </select>
+          </div>
+          <div>
+            <label for="arrival-airport">Arrival:</label>
+            <select id="arrival-airport">
+              <option value="">Select an airport</option>
+              <option value="ATL">
+                Atlanta Hartsfield–Jackson International Airport
+              </option>
+              <option value="LAX">
+                Los Angeles Los Angeles International Airport
+              </option>
+              <option value="ORD">
+                Chicago Chicago O'Hare International Airport
+              </option>
+              <option value="DFW">
+                Dallas Dallas/Fort Worth International Airport
+              </option>
+              <option value="DEN">Denver Denver International Airport</option>
+              <option value="JFK">
+                New York John F Kennedy International Airport
+              </option>
+              <option value="SFO">
+                San Francisco San Francisco International Airport
+              </option>
+              <option value="SEA">
+                Seattle Seattle–Tacoma International Airport
+              </option>
+              <option value="LAS">
+                Las Vegas McCarran International Airport
+              </option>
+              <option value="CLT">
+                Charlotte Charlotte Douglas International Airport
+              </option>
+              <option value="MIA">Miami Miami International Airport</option>
+              <option value="PHX">
+                Phoenix Phoenix Sky Harbor International Airport
+              </option>
+              <option value="IAH">
+                Houston George Bush Intercontinental Airport
+              </option>
+              <option value="EWR">
+                Newark Newark Liberty International Airport
+              </option>
+              <option value="MSP">
+                Minneapolis Minneapolis–St Paul International Airport
+              </option>
+              <option value="BOS">Boston Logan International Airport</option>
+              <option value="DTW">
+                Detroit Detroit Metropolitan Wayne County Airport
+              </option>
+              <option value="PHL">
+                Philadelphia Philadelphia International Airport
+              </option>
+              <option value="SAN">
+                San Diego San Diego International Airport
+              </option>
+              <option value="FLL">
+                Fort Lauderdale Fort Lauderdale–Hollywood International Airport
+              </option>
+              <option value="IAD">
+                Washington Washington Dulles International Airport
+              </option>
+              <option value="YYZ">
+                Toronto Toronto Pearson International Airport
+              </option>
+              <option value="YVR">
+                Vancouver Vancouver International Airport
+              </option>
+              <option value="YUL">
+                Montreal Montréal–Trudeau International Airport
+              </option>
+              <option value="MEX">
+                Mexico City Mexico City International Airport
+              </option>
+              <option value="LHR">London Heathrow Airport</option>
+              <option value="CDG">Paris Charles de Gaulle Airport</option>
+              <option value="FRA">Frankfurt Frankfurt Airport</option>
+              <option value="AMS">Amsterdam Schiphol Airport</option>
+              <option value="MAD">
+                Madrid Adolfo Suárez Madrid–Barajas Airport
+              </option>
+              <option value="BCN">Barcelona Barcelona–El Prat Airport</option>
+              <option value="FCO">
+                Rome Leonardo da Vinci–Fiumicino Airport
+              </option>
+              <option value="MUC">Munich Munich Airport</option>
+              <option value="LGW">London Gatwick Airport</option>
+              <option value="ZRH">Zurich Zurich Airport</option>
+              <option value="DUB">Dublin Dublin Airport</option>
+              <option value="ARN">Stockholm Stockholm Arlanda Airport</option>
+              <option value="CPH">Copenhagen Copenhagen Airport</option>
+              <option value="VIE">Vienna Vienna International Airport</option>
+              <option value="BRU">Brussels Brussels Airport</option>
+              <option value="SYD">Sydney Sydney Kingsford Smith Airport</option>
+              <option value="MEL">Melbourne Melbourne Airport</option>
+              <option value="BNE">Brisbane Brisbane Airport</option>
+              <option value="AKL">
+                Auckland Auckland International Airport
+              </option>
+              <option value="PER">Perth Perth Airport</option>
+              <option value="CHC">
+                Christchurch Christchurch International Airport
+              </option>
+              <option value="ADL">Adelaide Adelaide Airport</option>
+              <option value="CBR">Canberra Canberra Airport</option>
+              <option value="OOL">Gold Coast Coolangatta Airport</option>
+              <option value="HBA">Hobart Hobart International Airport</option>
+              <option value="PEK">Beijing Capital International Airport</option>
+              <option value="PVG">Shanghai Pudong International Airport</option>
+              <option value="CAN">
+                Guangzhou Baiyun International Airport
+              </option>
+              <option value="HKG">Hong Kong International Airport</option>
+              <option value="NRT">Tokyo Narita International Airport</option>
+              <option value="HND">Tokyo Haneda International Airport</option>
+              <option value="ICN">Seoul Incheon International Airport</option>
+              <option value="DEL">
+                Delhi Indira Gandhi International Airport
+              </option>
+              <option value="BKK">Bangkok Suvarnabhumi Airport</option>
+              <option value="SIN">Singapore Changi Airport</option>
+              <option value="KUL">Kuala Lumpur International Airport</option>
+              <option value="CGK">
+                Jakarta Soekarno–Hatta International Airport
+              </option>
+              <option value="MNL">
+                Manila Ninoy Aquino International Airport
+              </option>
+              <option value="BOM">
+                Mumbai Chhatrapati Shivaji Maharaj International Airport
+              </option>
+              <option value="DXB">Dubai International Airport</option>
+              <option value="CTU">
+                Chengdu Shuangliu International Airport
+              </option>
+              <option value="TPE">Taipei Taoyuan International Airport</option>
+              <option value="SZX">Shenzhen Bao'an International Airport</option>
+              <option value="CKG">
+                Chongqing Jiangbei International Airport
+              </option>
+              <option value="XIY">Xi’an Xianyang International Airport</option>
+              <option value="HGH">
+                Hangzhou Xiaoshan International Airport
+              </option>
+              <option value="FUK">Fukuoka Airport</option>
+              <option value="KIX">Osaka Kansai International Airport</option>
+              <option value="NGO">
+                Nagoya Chubu Centrair International Airport
+              </option>
+              <option value="CTS">Sapporo New Chitose Airport</option>
+              <option value="DPS">
+                Denpasar Ngurah Rai International Airport
+              </option>
+              <option value="SGN">
+                Ho Chi Minh City Tan Son Nhat International Airport
+              </option>
+              <option value="MCT">Muscat International Airport</option>
+              <option value="DOH">Doha Hamad International Airport</option>
+              <option value="AUH">Abu Dhabi International Airport</option>
+              <option value="JED">
+                Jeddah King Abdulaziz International Airport
+              </option>
+              <option value="RUH">
+                Riyadh King Khalid International Airport
+              </option>
+              <option value="AMM">
+                Amman Queen Alia International Airport
+              </option>
+              <option value="TLV">Tel Aviv Ben Gurion Airport</option>
+              <option value="SHA">
+                Shanghai Hongqiao International Airport
+              </option>
+              <option value="NKG">Nanjing Lukou International Airport</option>
+              <option value="WUH">Wuhan Tianhe International Airport</option>
+              <option value="SHE">
+                Shenyang Taoxian International Airport
+              </option>
+              <option value="CEB">
+                Cebu Mactan–Cebu International Airport
+              </option>
+              <option value="KHI">Karachi Jinnah International Airport</option>
+              <option value="DAC">Dhaka Shahjalal International Airport</option>
+              <option value="CMB">
+                Colombo Bandaranaike International Airport
+              </option>
+              <option value="KTM">
+                Kathmandu Tribhuvan International Airport
+              </option>
+              <option value="BWN">
+                Bandar Seri Begawan Brunei International Airport
+              </option>
+              <option value="LHE">
+                Lahore Allama Iqbal International Airport
+              </option>
+              <option value="ALA">Almaty International Airport</option>
+              <option value="BAH">Bahrain International Airport</option>
+              <option value="MLE">Malé Velana International Airport</option>
+              <option value="ULN">
+                Ulaanbaatar Chinggis Khaan International Airport
+              </option>
+            </select>
+          </div>
+          <div class="button-group">
+            <button id="get-route-details">
+              View Route Details <span class="indicator">▼</span>
+            </button>
+          </div>
+        </div>
+        <div class="results-container section-content" id="connection-results">
+          <h2 id="between-title">Connection Information</h2>
+          <div id="between-content"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

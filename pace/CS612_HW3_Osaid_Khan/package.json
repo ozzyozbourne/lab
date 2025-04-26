@@ -1,0 +1,17 @@
+{
+  "name": "assignment2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "express": "^4.21.2",
+    "pg": "^8.14.1"
+  }
+}
