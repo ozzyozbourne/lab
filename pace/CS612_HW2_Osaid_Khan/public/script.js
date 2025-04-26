@@ -77,87 +77,114 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter an airline code (e.g., AA for American Airlines)');
             return;
         }
-        const airportList = document.getElementById('airline-airports-list');
         const routeList = document.getElementById('airline-routes-list');
+        routeList.innerHTML = '<li>Loading...</li>';
 
         try {
             const routeData = await fetchData(`/airline/routes?code=${airlineCode}`);
+            routeList.innerHTML = '';
 
-            const airlineInfo = document.createElement('li');
-            airlineInfo.classList.add('airline-info');
-            airlineInfo.innerHTML = `<strong>${routeData.airline.name}</strong> (${routeData.airline.iata}/${routeData.airline.icao})`;
-            routeList.appendChild(airlineInfo);
+            // Create container for tables
+            const tablesContainer = document.createElement('div');
 
-            const separator = document.createElement('li');
-            separator.classList.add('separator');
-            routeList.appendChild(separator);
+            // Create airline info table
+            const airlineTable = document.createElement('table');
+            airlineTable.className = 'airline-info-table';
 
-            // Display routes
+            // Add airline table caption
+            const airlineCaption = document.createElement('caption');
+            airlineCaption.textContent = 'Airline Information';
+            airlineTable.appendChild(airlineCaption);
+
+            // Create header row
+            let headerRow = document.createElement('tr');
+            for (const key in routeData.airline) {
+                const th = document.createElement('th');
+                th.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                headerRow.appendChild(th);
+            }
+            airlineTable.appendChild(headerRow);
+
+            // Create data row
+            const dataRow = document.createElement('tr');
+            for (const key in routeData.airline) {
+                const td = document.createElement('td');
+                td.textContent = routeData.airline[key];
+                dataRow.appendChild(td);
+            }
+            airlineTable.appendChild(dataRow);
+
+            // Add airline table to container
+            tablesContainer.appendChild(airlineTable);
+
+            // Create routes table
+            const routesTable = document.createElement('table');
+            routesTable.className = 'routes-table';
+
+            // Add routes table caption
+            const routesCaption = document.createElement('caption');
+            routesCaption.textContent = 'Routes';
+            routesTable.appendChild(routesCaption);
+
+            // Create routes table header
+            const routesHeader = document.createElement('thead');
+            headerRow = document.createElement('tr');
+
+            // Define the columns we want to show in the routes table
+            const routeColumns = [
+                { key: 'departure_code', label: 'From' },
+                { key: 'arrival_code', label: 'To' },
+                { key: 'departure_airport', label: 'Departure Airport' },
+                { key: 'arrival_airport', label: 'Arrival Airport' },
+                { key: 'planes', label: 'Aircraft' }
+            ];
+
+            // Create header cells
+            routeColumns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column.label;
+                headerRow.appendChild(th);
+            });
+
+            routesHeader.appendChild(headerRow);
+            routesTable.appendChild(routesHeader);
+
+            // Create routes table body
+            const routesBody = document.createElement('tbody');
+
+            // Add rows for each route
             routeData.routes.forEach(route => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                <div class="route-item">
-                    <div class="route-airports">
-                        ${route.departure_code} → ${route.arrival_code}
-                    </div>
-                    <div class="route-details">
-                        ${route.departure_airport} (${route.departure_city}) to 
-                        ${route.arrival_airport} (${route.arrival_city})
-                    </div>
-                    <div class="route-aircraft">
-                        Aircraft: ${route.planes}
-                    </div>
-                </div>
-            `;
-                routeList.appendChild(li);
+                const row = document.createElement('tr');
+
+                routeColumns.forEach(column => {
+                    const td = document.createElement('td');
+
+                    // Special handling for departure/arrival airport cells to include city and country
+                    if (column.key === 'departure_airport') {
+                        td.textContent = `${route.departure_airport}, ${route.departure_city}, ${route.departure_country}`;
+                    }
+                    else if (column.key === 'arrival_airport') {
+                        td.textContent = `${route.arrival_airport}, ${route.arrival_city}, ${route.arrival_country}`;
+                    }
+                    else {
+                        td.textContent = route[column.key];
+                    }
+
+                    row.appendChild(td);
+                });
+
+                routesBody.appendChild(row);
             });
 
-            const uniqueAirports = new Map();
-            routeData.routes.forEach(route => {
-                if (!uniqueAirports.has(route.departure_code)) {
-                    uniqueAirports.set(route.departure_code, {
-                        code: route.departure_code,
-                        name: route.departure_airport,
-                        city: route.departure_city,
-                        country: route.departure_country
-                    });
-                }
+            routesTable.appendChild(routesBody);
 
-                if (!uniqueAirports.has(route.arrival_code)) {
-                    uniqueAirports.set(route.arrival_code, {
-                        code: route.arrival_code,
-                        name: route.arrival_airport,
-                        city: route.arrival_city,
-                        country: route.arrival_country
-                    });
-                }
-            });
+            // Add routes table to container
+            tablesContainer.appendChild(routesTable);
 
-            const airportHeader = document.createElement('li');
-            airportHeader.classList.add('airport-header');
-            airportHeader.innerHTML = `<strong>Airports served by ${routeData.airline.name}</strong>`;
-            airportList.appendChild(airportHeader);
-
-            const airportSeparator = document.createElement('li');
-            airportSeparator.classList.add('separator');
-            airportList.appendChild(airportSeparator);
-
-            const sortedAirports = Array.from(uniqueAirports.values())
-                .sort((a, b) => a.code.localeCompare(b.code));
-
-            sortedAirports.forEach(airport => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                <div class="airport-item">
-                    <strong>${airport.code}</strong> - ${airport.name}
-                    <div class="airport-location">${airport.city}, ${airport.country}</div>
-                </div>
-            `;
-                airportList.appendChild(li);
-            });
+            // Add tables container to the page
+            routeList.appendChild(tablesContainer);
 
         } catch (error) {
-            airportList.innerHTML = `<li>Error: ${error.message}</li>`;
             routeList.innerHTML = `<li>Error: ${error.message}</li>`;
         }
     }
