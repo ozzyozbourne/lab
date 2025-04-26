@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const countrySelect = document.getElementById('country-select');
     const airlineSelect = document.getElementById('airline-select');
     const airportSelect = document.getElementById('airport-select');
-    const routeAirportSelect = document.getElementById('route-airport-select');
+
     const departureAirportSelect = document.getElementById('departure-airport');
     const arrivalAirportSelect = document.getElementById('arrival-airport');
 
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadDepartingRoutes() {
-        const airportCode = routeAirportSelect.value;
+        const airportCode = document.querySelector('#airport-select-route').value;
         if (!airportCode) {
             alert('Please select an airport');
             return;
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('routes-title').textContent = `Departing Routes from ${airportCode}`;
             document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
 
-            const routes = await fetchData(`/routes/departures?airport=${airportCode}`);
+            const routes = await fetchData(`/routes/arrivals?departure=${airportCode}`);
             displayRoutes(routes);
         } catch (error) {
             document.getElementById('routes-list').innerHTML = `<li>Error: ${error.message}</li>`;
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function loadArrivingRoutes() {
-        const airportCode = routeAirportSelect.value;
+        const airportCode = document.querySelector('#airport-select-route').value;
         if (!airportCode) {
             alert('Please select an airport');
             return;
@@ -271,9 +271,26 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('routes-title').textContent = `Arriving Routes to ${airportCode}`;
             document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
 
-            document.getElementById('routes-list').innerHTML =
-                '<li>API limitation: There is no direct endpoint to get arriving routes.</li>' +
-                '<li>In a complete implementation, we would need to query all routes and filter by arrival.</li>';
+            const routes = await fetchData(`/routes/departures?arrival=${airportCode}`);
+            displayRoutes(routes);
+        } catch (error) {
+            document.getElementById('routes-list').innerHTML = `<li>Error: ${error.message}</li>`;
+        }
+    }
+
+    async function loadAirportAirlines() {
+        const airportCode = document.querySelector('#airport-select-route').value;
+        if (!airportCode) {
+            alert('Please select an airport');
+            return;
+        }
+
+        try {
+            document.getElementById('routes-title').textContent = `Airlines Flying To/From ${airportCode}`;
+            document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
+
+            const airlines = await fetchData(`/airport/airlines?airport=${airportCode}`);
+            displayAirlines(airlines);
         } catch (error) {
             document.getElementById('routes-list').innerHTML = `<li>Error: ${error.message}</li>`;
         }
@@ -290,28 +307,40 @@ document.addEventListener('DOMContentLoaded', function() {
         routesList.innerHTML = '';
         routes.forEach(route => {
             const li = document.createElement('li');
-            li.textContent = `${route.name}(${route.iata}) - ${route.city}, ${route.country}`;
+            li.textContent = `${route.name} (${route.iata || route.icao}) - ${route.city}, ${route.country}`;
             routesList.appendChild(li);
         });
     }
 
-    async function loadAirportAirlines() {
-        const airportCode = routeAirportSelect.value;
-        if (!airportCode) {
-            alert('Please select an airport');
+    function displayAirlines(airlines) {
+        const routesList = document.getElementById('routes-list');
+
+        if (airlines.length === 0) {
+            routesList.innerHTML = '<li>No airlines found</li>';
             return;
         }
 
-        try {
-            document.getElementById('routes-title').textContent = `Airlines Flying To/From ${airportCode}`;
-            document.getElementById('routes-list').innerHTML = '<li>Loading...</li>';
+        routesList.innerHTML = '';
+        airlines.forEach(airline => {
+            const li = document.createElement('li');
+            li.textContent = `${airline.name} (${airline.iata || airline.icao}) - ${airline.callsign || ''} - ${airline.country}`;
+            routesList.appendChild(li);
+        });
+    }
 
-            document.getElementById('routes-list').innerHTML =
-                '<li>API limitation: There is no direct endpoint to get airlines by airport.</li>' +
-                '<li>In a complete implementation, we would need to query all routes and extract unique airlines.</li>';
-        } catch (error) {
-            document.getElementById('routes-list').innerHTML = `<li>Error: ${error.message}</li>`;
+    function displayAirlines(airlines) {
+        const routesList = document.getElementById('routes-list');
+        if (airlines.length === 0) {
+            routesList.innerHTML = '<li>No airlines found</li>';
+            return;
         }
+
+        routesList.innerHTML = '';
+        airlines.forEach(airline => {
+            const li = document.createElement('li');
+            li.textContent = `${airline.name} (${airline.iata || airline.icao}) - ${airline.country}`;
+            routesList.appendChild(li);
+        });
     }
 
     async function getRouteDetails() {

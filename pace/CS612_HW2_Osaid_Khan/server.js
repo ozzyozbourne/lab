@@ -8,6 +8,7 @@ const axios = require('axios')
 
 const app = express()
 app.use(express.json())
+app.use(express.static('public'))
 
 const pool = new Pool({
     user: 'postgres',
@@ -70,23 +71,20 @@ app.get('/airline', async (req, res) => {
     }
 })
 
-// Get all airports served by a specific airline
-app.get('/airline/airports', async (req, res) => {
+// Get all routes for a specific airline with airport names
+app.get('/airline/routes', async (req, res) => {
     try {
         const { code } = req.query
         if (!code) {
             return res.status(400).json({ error: 'Airline code (IATA or ICAO) is required' })
         }
 
-        // First verify the airline exists
         const airlineQuery = `
-            SELECT name, iata, icao 
-            FROM airlines 
+            SELECT name, iata, icao
+            FROM airlines
             WHERE iata = $1 OR icao = $1
         `
-        console.log(airlineQuery)
         const airlineResult = await pool.query(airlineQuery, [code.toUpperCase()])
-
         if (airlineResult.rows.length === 0) {
             return res.status(404).json({ error: `No airline found with code ${code}` })
         }
@@ -94,44 +92,57 @@ app.get('/airline/airports', async (req, res) => {
         const airline = airlineResult.rows[0]
         const airlineCode = airline.iata || airline.icao
 
-        // Find all unique airports this airline serves (either as departure or arrival)
-        const airportsQuery = `
-            SELECT DISTINCT a.name, a.city, a.country, a.iata, a.icao, a.latitude, a.longitude
-            FROM airports a
-            WHERE a.iata IN (
-                SELECT DISTINCT departure FROM routes WHERE airline = $1
-                UNION
-                SELECT DISTINCT arrival FROM routes WHERE airline = $1
-            )
+        const routesQuery = `
+            SELECT
+                r.airline,
+                r.departure as departure_code,
+                r.arrival as arrival_code,
+                r.planes,
+                dep.name as departure_airport,
+                dep.city as departure_city,
+                dep.country as departure_country,
+                arr.name as arrival_airport,
+                arr.city as arrival_city,
+                arr.country as arrival_country
+            FROM
+                routes r
+            JOIN
+                airports dep ON r.departure = dep.iata
+            JOIN
+                airports arr ON r.arrival = arr.iata
+            WHERE
+                r.airline = $1
+            ORDER BY
+                r.departure, r.arrival
         `
-        console.log(airportsQuery)
-        const airportsResult = await pool.query(airportsQuery, [airlineCode])
 
-        if (airportsResult.rows.length === 0) {
+        const routesResult = await pool.query(routesQuery, [airlineCode])
+
+        if (routesResult.rows.length === 0) {
             return res.status(404).json({
                 airline: airline.name,
-                message: "This airline has no registered airports in the database."
+                message: "This airline has no registered routes in the database."
             })
         }
 
-        // Prepare the final response
         const response = {
             airline: {
                 name: airline.name,
                 iata: airline.iata,
                 icao: airline.icao
             },
-            airports: airportsResult.rows
+            routes: routesResult.rows,
+            count: routesResult.rows.length
         }
 
-        console.log("Sending response for airline airports")
+        console.log(`Sending response for ${routesResult.rows.length} routes of airline ${airline.name}`)
         return res.json(response)
-
     } catch (error) {
-        console.log(error)
+        console.error(error)
         return res.status(500).json({ error: 'Internal server error' })
     }
 })
+
 
 app.post('/airlines', async (req, res) => {
     try {
@@ -416,6 +427,66 @@ app.get('/routes/arrivals', async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' })
     }
 })
+
+app.get('/routes/departures', async (req, res) => {
+    try {
+        const { arrival } = req.query
+        if (!arrival) {
+            return res.status(400).json({ error: 'Arrival airport code is required' })
+        }
+
+        const query = `
+            SELECT DISTINCT a.name, a.city, a.country, a.iata, a.icao
+            FROM routes r
+            JOIN airports a ON r.departure = a.iata
+            WHERE r.arrival = $1
+        `
+
+        console.log(query)
+        const result = await pool.query(query, [arrival.toUpperCase()])
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: `No routes found to airport with code ${arrival}` })
+        }
+
+        console.log(result.rows)
+        return res.json(result.rows)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error: 'Internal server error' })
+    }
+})
+
+app.get('/airport/airlines', async (req, res) => {
+    try {
+        const { airport } = req.query;
+        if (!airport) {
+            return res.status(400).json({ error: 'Airport code is required' });
+        }
+
+        const query = `
+            SELECT DISTINCT a.name, a.iata, a.icao, a.callsign, a.country
+            FROM routes r
+            JOIN airlines a ON r.airline = a.iata
+            WHERE r.departure = $1 OR r.arrival = $1
+        `;
+
+        console.log(query);
+        const result = await pool.query(query, [airport.toUpperCase()]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                error: `No airlines found flying to/from airport with code ${airport}`
+            });
+        }
+
+        console.log(result.rows);
+        return res.json(result.rows);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 app.get('/routes/byairline', async (req, res) => {
     try {
