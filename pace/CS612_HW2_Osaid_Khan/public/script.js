@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('load-departures').addEventListener('click', loadDepartingRoutes);
         document.getElementById('load-arrivals').addEventListener('click', loadArrivingRoutes);
         document.getElementById('load-airlines').addEventListener('click', loadAirportAirlines);
-        document.getElementById('find-airlines').addEventListener('click', findAirlinesBetweenAirports);
-        document.getElementById('calculate-distance').addEventListener('click', calculateDistance);
+        document.getElementById('get-route-details').addEventListener('click', getRouteDetails);
     }
 
 
@@ -315,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    async function findAirlinesBetweenAirports() {
+    async function getRouteDetails() {
         const departureCode = departureAirportSelect.value;
         const arrivalCode = arrivalAirportSelect.value;
 
@@ -330,81 +329,45 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            document.getElementById('between-title').textContent = `Airlines Flying from ${departureCode} to ${arrivalCode}`;
+            document.getElementById('between-title').textContent = `Route Details: ${departureCode} to ${arrivalCode}`;
             document.getElementById('between-content').innerHTML = 'Loading...';
-
             const routeData = await fetchData(`/routes?departure=${departureCode}&arrival=${arrivalCode}`);
-            displayAirlinesBetweenAirports(routeData);
+
+            displayRouteDetails(routeData);
         } catch (error) {
             document.getElementById('between-content').innerHTML = `Error: ${error.message}`;
         }
     }
 
-    function displayAirlinesBetweenAirports(routeData) {
+    function displayRouteDetails(routeData) {
         const contentDiv = document.getElementById('between-content');
 
-        if (!routeData.routes || routeData.routes.length === 0) {
-            contentDiv.innerHTML = '<p>No airlines found flying this route</p>';
-            return;
+        let html = `
+    <div class="detail-row">
+        <span class="detail-label">From:</span>
+        <span>${routeData.departure.name} (${routeData.departure.code})</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">To:</span>
+        <span>${routeData.arrival.name} (${routeData.arrival.code})</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Distance:</span>
+        <span class="weather-highlight">${routeData.distance} ${routeData.unit}</span>
+    </div>`;
+
+        if (routeData.routes && routeData.routes.length > 0) {
+            html += '<div class="detail-row"><span class="detail-label">Airlines:</span></div>';
+            html += '<ul class="data-list">';
+
+            routeData.routes.forEach(route => {
+                html += `<li><strong>${route.airline.trim()}</strong> - Aircraft: ${route.aircraft_types.join(', ')}</li>`;
+            });
+
+            html += '</ul>';
+        } else {
+            html += '<div class="detail-row"><span class="detail-label">Airlines:</span><span>No airlines found for this route</span></div>';
         }
-
-        let html = `<p><strong>Distance:</strong> ${routeData.distance} ${routeData.unit}</p>`;
-        html += '<ul class="data-list">';
-
-        routeData.routes.forEach(route => {
-            html += `<li><strong>${route.airline.trim()}</strong> - Aircraft: ${route.aircraft_types.join(', ')}</li>`;
-        });
-
-        html += '</ul>';
-        contentDiv.innerHTML = html;
-    }
-
-    async function calculateDistance() {
-        const departureCode = departureAirportSelect.value;
-        const arrivalCode = arrivalAirportSelect.value;
-
-        if (!departureCode || !arrivalCode) {
-            alert('Please select both departure and arrival airports');
-            return;
-        }
-
-        if (departureCode === arrivalCode) {
-            alert('Please select different airports for departure and arrival');
-            return;
-        }
-
-        try {
-            document.getElementById('between-title').textContent = `Distance from ${departureCode} to ${arrivalCode}`;
-            document.getElementById('between-content').innerHTML = 'Calculating...';
-
-            const routeData = await fetchData(`/routes?departure=${departureCode}&arrival=${arrivalCode}`);
-            displayDistance(routeData);
-        } catch (error) {
-            document.getElementById('between-content').innerHTML = `Error: ${error.message}`;
-        }
-    }
-
-    function displayDistance(routeData) {
-        const contentDiv = document.getElementById('between-content');
-
-        const departureInfo = `${routeData.departure.name}(${routeData.departure.code})`;
-        const arrivalInfo = `${routeData.arrival.name}(${routeData.arrival.code})`;
-
-        const html = `
-        <div class="detail-row">
-            <span class="detail-label">From:</span>
-            <span>${departureInfo}</span>
-        </div>
-        <div class="detail-row">
-            <span class="detail-label">To:</span>
-            <span>${arrivalInfo}</span>
-        </div>
-        <div class="detail-row">
-            <span class="detail-label">Distance:</span>
-            <span class="weather-highlight">${routeData.distance} ${routeData.unit}</span>
-        </div>
-        `;
-
         contentDiv.innerHTML = html;
     }
 
