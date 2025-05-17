@@ -7,6 +7,10 @@ main :: proc() {
 	variables()
 	loops(10)
 	if_statements(12)
+
 	cat := structs()
+	fmt.println(cat)
+
+	pointers(&cat)
 	fmt.println(cat)
 }
