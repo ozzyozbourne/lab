@@ -150,3 +150,21 @@ pub fn thread1() {
 pub fn type_of<T>(_: &T) -> &'static str {
     type_name::<T>()
 }
+
+pub fn scope() {
+    let numbers3 = vec![1, 2, 3];
+    thread::scope(|s| {
+        s.spawn(|| {
+            println!("length: {}", numbers3.len());
+            println!("Type inside closure: {}", type_of(&numbers3));
+        });
+
+        s.spawn(|| {
+            for n in numbers3.iter() {
+                println!("{n}");
+            }
+        });
+    });
+
+    println!("testing -> {}", numbers3.len());
+}
