@@ -11,6 +11,6 @@ main :: proc() {
 	cat := structs()
 	fmt.println(cat)
 
-	pointers(&cat)
+	_ = pointers(&cat)
 	fmt.println(cat)
 }

@@ -11,6 +11,7 @@
 **/target/
 **/debug/
 **/container/
+**/*.dSYM/
 
 *.log
 *.exe
