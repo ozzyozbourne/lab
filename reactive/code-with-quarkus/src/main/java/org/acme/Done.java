@@ -2,8 +2,8 @@ package org.acme;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.unchecked.Unchecked;
 import io.vertx.mutiny.core.Vertx;
-import io.vertx.mutiny.core.buffer.Buffer;
 import jakarta.inject.Inject;
 
 
@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Done {
 
@@ -79,10 +82,120 @@ public class Done {
         Uni.createFrom().item(List.of(1, 2, 3, 4, 5))
                 .onItem().disjoint()
                 .subscribe().with(System.out::println);
+
+        Uni.createFrom().item(List.of(1, 2, 3, 4, 5))
+                .subscribe().with(System.out::println);
+// Output: [1, 2, 3, 4, 5]
+
+// With disjoint - prints each element separately
+        Uni.createFrom().item(List.of(1, 2, 3, 4, 5))
+                .onItem().disjoint()
+                .subscribe().with(System.out::println);
+// Output: 1
+
+        Multi<String> stream = Multi.createFrom().emitter(emitter -> {
+            // You now have control! You can emit values whenever you want
+            emitter.emit("Hello");
+            emitter.emit("World");
+            Long s= emitter.requested();
+            emitter.complete(); // Signal that we're done
+        });
+
+        // -------------------------------------------------------------------------------------------------- //
+
+        System.out.println("----");
+
+        Multi.createFrom().range(10, 15)
+                .subscribe().with(System.out::println);
+
+        var randomNumbers = Stream
+                .generate(ThreadLocalRandom.current()::nextInt)
+                .limit(5)
+                .collect(Collectors.toList());
+
+        // -------------------------------------------------------------------------------------------------- //
+
+        System.out.println("----");
+
+        Multi.createFrom().iterable(randomNumbers)
+                .subscribe().with(System.out::println);
+
+
+        // -------------------------------------------------------------------------------------------------- //
+
+        Multi.createFrom().items(1, 2, 3)
+                .subscribe().with(
+                        subscription -> {
+                            System.out.println("Subscription: " + subscription);
+                            subscription.request(10);
+                        },
+                        item -> System.out.println("Item: " + item),
+                        failure -> System.out.println("Failure: " + failure.getMessage()),
+                        () -> System.out.println("Completed"));
+
+        Multi<Integer> pipeline = Multi.createFrom().items(1, 2, 3, 4, 5)
+                // This failure handler is defined first, but what can it catch?
+                .onFailure()
+                .invoke(err -> System.out.println("Handler A caught: " + err.getMessage()))
+                .onFailure().recoverWithItem(99)
+
+                // These operations come AFTER the failure handler
+                .onItem().invoke(s -> {}).onItem()
+                .transform(Unchecked.function(n -> {
+                    System.out.println("Transform 1: " + n);
+                    if (n == 3) throw new RuntimeException("Error in transform 1!");
+                    return n * 2;
+                }))
+                .invoke(n -> System.out.println("After transform 1: " + n))
+
+                // This second failure handler comes after the operations above
+                .onFailure()
+                .invoke(err -> System.out.println("Handler B caught: " + err.getMessage()))
+                .onFailure()
+                .recoverWithItem(88);
+
+        pipeline.subscribe().with(System.out::println);
+
+
+        Uni.createFrom().item(123)
+                .invoke(n -> System.out.println("n = " + n))
+                .call(n -> Uni.createFrom()
+                        .voidItem()
+                        .invoke(() -> System.out.println("call(" + n + ")")))
+                .eventually(() -> System.out.println("eventually()"))
+                .subscribe().with(System.out::println);
     }
 
-    public Uni<String> test(String name, Vertx vertx){
-        return vertx.fileSystem().readFile(name)
-                .map(Buffer::toString);
+
+    public static void demonstrateEventLoopBehavior() throws InterruptedException {
+        System.out.println("Thread: " + Thread.currentThread().getName());
+        Multi.createFrom().items(1, 2, 3)
+                .onItem()
+                .transform(n -> {
+                    System.out.println("Sync transform on thread: " +
+                            Thread.currentThread().getName() + " for item: " + n);
+                    return n * 2;
+                })
+                .onItem()
+                .invoke(n -> System.out.println("Sync invoke: " + n))
+                .onItem()
+                .transformToUniAndConcatenate(n -> {
+                    System.out.println("Creating async operation for: " + n);
+                    return Uni.createFrom().item(n)
+                            .onItem().delayIt().by(Duration.ofMillis(100))
+                            .onItem().invoke(x ->
+                                    System.out.println("Async completed on thread: " +
+                                            Thread.currentThread().getName() + " for item: " + x));
+                })
+                .onItem()
+                .invoke(n -> System.out.println("Back in pipeline: " + n))
+                .subscribe().with(
+                        item -> System.out.println("Subscriber got: " + item),
+                        error -> System.out.println("Error: " + error)
+                );
+        System.out.println("Main method continues!");
+        Thread.sleep(500);
+        System.out.println("Main method over!");
     }
+
 }
