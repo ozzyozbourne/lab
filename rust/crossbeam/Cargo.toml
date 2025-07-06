@@ -1,0 +1,11 @@
+[package]
+name = "crossbeam"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+
+[features]
+default = ["std"]
+std = []
