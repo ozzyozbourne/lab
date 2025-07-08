@@ -1,7 +1,7 @@
 #[inline(never)] // Prevent inlining to see the real behavior
 fn get_const_refs() -> ([&'static i32; 2], [&'static i32; 2]) {
     const VALUE: i32 = 42;
-    static STATIC_VALUE: i32 = 42;
+    static STATIC_VALUE: i32 = 42; //we can define static values anywhere !
 
     // Force the creation of temporaries in different stack frames
     let (c1, s1) = (Box::leak(Box::new(VALUE)), &STATIC_VALUE);
@@ -26,5 +26,4 @@ fn main() {
         "Are they equal? {}",
         std::ptr::eq(static_refs[0], static_refs[1])
     );
-    demonstrate_all_cases();
 }
