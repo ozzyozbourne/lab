@@ -1,0 +1,11 @@
+1) So there is a quic tls separate rfc called 9001
+
+2) The TLS handshake need to be quick 
+
+3) There is a option for the clients to send the data immediately using 0-RTT
+
+4) Also UDP (RFC 768) builds on IP and all the routers, just look at the IP headers in the packet, 
+so theorically we can build any new protocol on top of IP
+
+5) Packets are the basic unit of the layer 3 and frame is the container for the packets to 
+be transported in using different physical layers 
