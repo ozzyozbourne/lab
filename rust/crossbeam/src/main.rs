@@ -1,4 +1,4 @@
-use std::{
+pub use std::{
     alloc::{Layout, alloc_zeroed, handle_alloc_error},
     boxed::Box,
     sync::Arc,
@@ -6,7 +6,7 @@ use std::{
     time::Duration,
 };
 
-use core::{
+pub use core::{
     cell::{Cell, UnsafeCell},
     fmt, hint,
     marker::PhantomData,
@@ -27,8 +27,53 @@ const BLOCK_CAP: usize = LAP - 1;
 const SHIFT: usize = 1;
 const HAS_NEXT: usize = 1;
 
+mod slot {
+    pub struct Slot<T> {
+        value: core::cell::UnsafeCell<core::mem::MaybeUninit<T>>,
+        state: core::sync::atomic::AtomicUsize,
+    }
+
+    pub fn t1() {
+        let cell = core::cell::UnsafeCell::new(8);
+        let shared_ref = &cell;
+
+        let ptr = shared_ref.get();
+
+        unsafe { *ptr += 1 };
+    }
+}
 pub struct CachePadded<T> {
     value: T,
+}
+
+pub struct Backoff {
+    step: Cell<u32>,
+}
+
+struct Slot<T> {
+    value: UnsafeCell<MaybeUninit<T>>,
+    state: AtomicUsize,
+}
+
+struct Block<T> {
+    next: AtomicPtr<Block<T>>,
+    slots: [Slot<T>; BLOCK_CAP],
+}
+
+struct Position<T> {
+    index: AtomicUsize,
+    block: AtomicPtr<Block<T>>,
+}
+
+pub struct SegQueue<T> {
+    head: CachePadded<Position<T>>,
+    tail: CachePadded<Position<T>>,
+    _marker: PhantomData<T>,
+}
+
+#[derive(Debug)]
+pub struct IntoIter<T> {
+    value: SegQueue<T>,
 }
 
 unsafe impl<T: Send> Send for CachePadded<T> {}
@@ -76,10 +121,6 @@ impl<T: fmt::Display> fmt::Display for CachePadded<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(&self.value, f)
     }
-}
-
-pub struct Backoff {
-    step: Cell<u32>,
 }
 
 impl Backoff {
@@ -140,11 +181,6 @@ impl Default for Backoff {
     }
 }
 
-struct Slot<T> {
-    value: UnsafeCell<MaybeUninit<T>>,
-    state: AtomicUsize,
-}
-
 impl<T> Slot<T> {
     fn wait_write(&self) {
         let backoff = Backoff::new();
@@ -152,11 +188,6 @@ impl<T> Slot<T> {
             backoff.snooze();
         }
     }
-}
-
-struct Block<T> {
-    next: AtomicPtr<Block<T>>,
-    slots: [Slot<T>; BLOCK_CAP],
 }
 
 impl<T> Block<T> {
@@ -199,17 +230,6 @@ impl<T> Block<T> {
         }
         drop(unsafe { Box::from_raw(this) });
     }
-}
-
-struct Position<T> {
-    index: AtomicUsize,
-    block: AtomicPtr<Block<T>>,
-}
-
-pub struct SegQueue<T> {
-    head: CachePadded<Position<T>>,
-    tail: CachePadded<Position<T>>,
-    _marker: PhantomData<T>,
 }
 
 unsafe impl<T: Send> Send for SegQueue<T> {}
@@ -467,11 +487,6 @@ impl<T> IntoIterator for SegQueue<T> {
     fn into_iter(self) -> Self::IntoIter {
         IntoIter { value: self }
     }
-}
-
-#[derive(Debug)]
-pub struct IntoIter<T> {
-    value: SegQueue<T>,
 }
 
 impl<T> Iterator for IntoIter<T> {

@@ -1,0 +1,25 @@
+so the tcl we have default value for the function params and the function params are separated by
+a space 
+
+so a simple function can be 
+
+proc one {a b c} {
+}
+
+with default value 
+proc two {{a "one"} {b "two"} {c "three"}} {
+
+}
+
+so here this is we have the nested bracked since the s is defualt params with value {}
+and it needs to be nested in the {} and that is nested in the function params declaration hence 
+it looks
+
+proc bp {{ s {} }} {
+
+}
+
+to access a variabel be use $varaible name and to declare it we just use a name 
+
+
+ok so the difference in the starting the cluser 

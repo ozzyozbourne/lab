@@ -1,0 +1,25 @@
+version: "2.2"
+services:
+  jobmanager:
+    image: flink:latest
+    ports:
+      - "8081:8081"  # Exposes the Flink Web UI on your Mac's port 8081
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        jobmanager.bind-host: 0.0.0.0
+
+  taskmanager:
+    image: flink:latest
+    depends_on:
+      - jobmanager  # Ensures JobManager starts first
+    command: taskmanager
+    scale: 2  # Start with 2 TaskManagers (you can adjust this)
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+        taskmanager.bind-host: 0.0.0.0
