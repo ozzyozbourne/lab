@@ -1,10 +1,35 @@
-use std::thread::current;
+use std::{thread::sleep, time::Duration};
+use tracing::{info, instrument};
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt()
+        .with_thread_ids(true)
+        .with_thread_names(true)
+        .init();
+
+    info!(location = "Main Entry");
+
     heavy_work().await;
+    light_work().await;
+
+    info!(location = "Main Exit");
 }
 
+#[instrument]
 async fn heavy_work() {
-    println!("Entry -> {:?}", current().id());
+    info!(location = "HV Entry");
+
+    _ = tokio::task::spawn_blocking(|| {
+        info!(location = "BLOCKING");
+        sleep(Duration::from_secs(5));
+    })
+    .await;
+
+    info!(location = "HV Exit");
+}
+
+#[instrument]
+async fn light_work() {
+    info!(location = "LIGHT");
 }
