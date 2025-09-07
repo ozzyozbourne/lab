@@ -1,39 +1,40 @@
 package org.acme;
 
-import io.quarkus.websockets.next.OnOpen;
-import io.quarkus.websockets.next.OnTextMessage;
-import io.quarkus.websockets.next.WebSocket;
 import io.smallrye.mutiny.Multi;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.jboss.resteasy.reactive.RestStreamElementType;
 
-@WebSocket(path = "/chatty")
+@Path("/chatty")
 public class GreetingResource {
 
-    private final Chat chat;
+    private final GenJoke gk;
+    private final Critic ct;
 
     @Inject
-    public GreetingResource(Chat chat) {
-        this.chat = chat;
-    }
-
-    @OnOpen
-    public String onOpen() {
-        return "Welcome to Miles of Smiles! How can I help you today?";
-    }
-
-    @OnTextMessage
-    public Multi<String> onTextMessage(String message) {
-        return chat.chat(message);
+    public GreetingResource(GenJoke gk, Critic ct) {
+        this.gk = gk;
+        this.ct = ct;
     }
 
     @POST
     @Produces(MediaType.SERVER_SENT_EVENTS)
-    @Consumes(MediaType.TEXT_PLAIN)
-    @RestStreamElementType(MediaType.TEXT_PLAIN)
     public Multi<String> hello(String body) {
-        return chat.chat(body);
+       return gk.chat(body).collect().asList()
+               .map(ck -> String.join("", ck))
+               .invoke(joke -> System.out.println("generated joke " + joke))
+
+               .onItem().transformToMulti(ct::chat)
+               .collect().asList()
+               .map(ck -> String.join("", ck))
+               .invoke(criticism -> System.out.println("Criticism: " + criticism))
+
+               .onItem().transformToMulti(ct::chat)
+               .collect().asList()
+               .map(chunks -> String.join("", chunks))
+               .invoke(finalResult -> System.out.println("Criticism: " + finalResult))
+
+               .onItem().transformToMulti(ct::chat);
+
     }
 }

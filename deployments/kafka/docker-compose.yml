@@ -43,11 +43,13 @@ services:
       - "8084:8080"
     depends_on:
       - broker
+    networks:
+      - kafka-network
 
 
 volumes:
   kafka-data:
-    driver:local
+    driver: local
 
 networks:
   kafka-network:
