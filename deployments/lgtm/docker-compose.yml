@@ -1,19 +1,27 @@
-version: '3'
 services:
   lgtm:
-    image: docker.io/grafana/otel-lgtm:latest  
+    image: docker.io/grafana/otel-lgtm:latest
     container_name: lgtm
     ports:
       - "3000:3000"
       - "4317:4317"
       - "4318:4318"
+      - "9090:9090" 
     volumes:
-      - ./container/grafana:/data/grafana
-      - ./container/prometheus:/data/prometheus
-      - ./container/loki:/data/loki
+      - grafana_data:/data/grafana
+      - prometheus_data:/data/prometheus
+      - loki_data:/data/loki
     environment:
       - GF_PATHS_DATA=/data/grafana
+      - OTEL_EXPORTER_OTLP_ENDPOINT=api.honeycomb.io:443
+      - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS}
     env_file:
       - .env
-    stdin_open: true  # Equivalent to -i in docker run
-    tty: true         # Equivalent to -t in docker run
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  grafana_data:
+  prometheus_data:
+  loki_data:
