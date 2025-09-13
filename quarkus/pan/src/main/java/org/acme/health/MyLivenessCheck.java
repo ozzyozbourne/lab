@@ -1,4 +1,4 @@
-package org.acme;
+package org.acme.health;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;

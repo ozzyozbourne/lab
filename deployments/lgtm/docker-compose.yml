@@ -13,8 +13,10 @@ services:
       - loki_data:/data/loki
     environment:
       - GF_PATHS_DATA=/data/grafana
-      - OTEL_EXPORTER_OTLP_ENDPOINT=api.honeycomb.io:443
+      - OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io/
       - OTEL_EXPORTER_OTLP_HEADERS=${OTEL_EXPORTER_OTLP_HEADERS}
+      - OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION=base2_exponential_bucket_histogram
+      # - ENABLE_LOGS_ALL=true
     env_file:
       - .env
     stdin_open: true
