@@ -3,14 +3,30 @@ package org.acme.entities;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "stocks")
-public class Stock extends PanacheEntityBase {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "eventType")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Payload.TradePay.class, name = "TRADE"),
+        @JsonSubTypes.Type(value = Payload.QuotePay.class, name = "QUOTE"),
+        @JsonSubTypes.Type(value = Payload.OrderBook.class, name = "ORDER_BOOK"),
+        @JsonSubTypes.Type(value = Payload.BarPay.class, name = "BAR"),
+        @JsonSubTypes.Type(value = Payload.MarketStatus.class, name = "MARKET_STATUS"),
+        @JsonSubTypes.Type(value = Payload.PriceMovement.class, name = "PRICE_MOVEMENT"),
+        @JsonSubTypes.Type(value = Payload.CorporateAction.class, name = "CORPORATE_ACTION"),
+        @JsonSubTypes.Type(value = Payload.News.class, name = "NEWS"),
+        @JsonSubTypes.Type(value = Payload.VolumeSpike.class, name = "VOLUME_SPIKE"),
+        @JsonSubTypes.Type(value = Payload.OptionsActivity.class, name = "OPTIONS_ACTIVITY"),
+        @JsonSubTypes.Type(value = Payload.TechnicalIndicator.class, name = "TECHNICAL_INDICATOR"),
+        @JsonSubTypes.Type(value = Payload.OrderUpdate.class, name = "ORDER_UPDATE"),
+        @JsonSubTypes.Type(value = Payload.PositionUpdate.class, name = "POSITION_UPDATE"),
+        @JsonSubTypes.Type(value = Payload.AccountUpdate.class, name = "ACCOUNT_UPDATE")
+})
+public class Stock  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,5 +72,21 @@ public class Stock extends PanacheEntityBase {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     public OffsetDateTime updatedAt;
+
+    public Stock() {}
+
+    public Stock(String symbol, String name, String sector, BigDecimal startingPrice, BigDecimal volatility) {
+        this.symbol = symbol;
+        this.name = name;
+        this.sector = sector;
+        this.startingPrice = startingPrice;
+        this.volatility = volatility;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Stock{id=%d, symbol='%s', name='%s', currentPrice=%s}",
+                id, symbol, name, currentPrice);
+    }
 
 }

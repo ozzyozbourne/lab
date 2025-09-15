@@ -8,6 +8,6 @@ class Gen {
 
 
     public void get(){
-        final var stock = new Stock();
+
     }
 }
