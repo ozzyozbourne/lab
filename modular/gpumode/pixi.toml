@@ -1,0 +1,11 @@
+[workspace]
+authors = ["ozzyozbourne <khanosaid726@gmail.com>"]
+channels = ["https://conda.modular.com/max-nightly", "conda-forge"]
+name = "gpumode"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+mojo = ">=25.6.0.dev2025090305,<26"
