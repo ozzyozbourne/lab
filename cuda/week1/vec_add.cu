@@ -12,6 +12,22 @@ __global__ void vectorAdd(float *const A, float *const B, float *const C, const 
     if (i < num_elements) { C[i] = A[i] + B[i]; }
 }
 
+__global__ void vectorAdd_arena(float *const base, int num_elements) {
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+    if (i < num_elements) {
+        float *const A = base;
+        float *const B = base + num_elements;
+        float *const C = base + 2 * num_elements;
+        C[i] = A[i] + B[i];
+    }
+}
+
+__global__ void vectorAdd_arena_optimized(float *const base, const int num_elements) {
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+    if (i < num_elements) { base[2 * num_elements + i] = base[i] + base[num_elements + i]; }
+}
+
+
 int main(void) {
     cudaError_t err = cudaSuccess;
 
@@ -56,6 +72,15 @@ int main(void) {
     }
 
     printf("Test PASSED\n");
+
+    printf("-----------------------MEMORY-ADDRESSING-------------------------\n")
+    printf("d_A: %p\n", d_A);
+    printf("d_B: %p\n", d_B); 
+    printf("d_C: %p\n", d_C);
+    printf("Diff B-A: %ld bytes\n", (char*)d_B - (char*)d_A);
+    printf("Diff C-B: %ld bytes\n", (char*)d_C - (char*)d_B);
+    printf("-----------------------------------------------------------------\n")
+
     cudaFree(d_data);
     free(h_data);
 
