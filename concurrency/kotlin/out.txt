@@ -1,0 +1,129 @@
+Compiled from "state.kt"
+public final class StateKt {
+  public static final java.lang.Object suspendFunction1(kotlin.coroutines.Continuation<? super java.lang.Integer>);
+    Code:
+       0: ldc           #11                 // String Running suspendFunction1()
+       2: getstatic     #17                 // Field java/lang/System.out:Ljava/io/PrintStream;
+       5: swap
+       6: invokevirtual #23                 // Method java/io/PrintStream.println:(Ljava/lang/Object;)V
+       9: bipush        10
+      11: invokestatic  #29                 // Method kotlin/coroutines/jvm/internal/Boxing.boxInt:(I)Ljava/lang/Integer;
+      14: areturn
+
+  public static final java.lang.Object suspendFunction2(kotlin.coroutines.Continuation<? super java.lang.Integer>);
+    Code:
+       0: ldc           #34                 // String Running suspendFunction2()
+       2: getstatic     #17                 // Field java/lang/System.out:Ljava/io/PrintStream;
+       5: swap
+       6: invokevirtual #23                 // Method java/io/PrintStream.println:(Ljava/lang/Object;)V
+       9: bipush        20
+      11: invokestatic  #29                 // Method kotlin/coroutines/jvm/internal/Boxing.boxInt:(I)Ljava/lang/Integer;
+      14: areturn
+
+  public static final java.lang.Object example(kotlin.coroutines.Continuation<? super java.lang.Integer>);
+    Code:
+       0: aload_0
+       1: instanceof    #37                 // class StateKt$example$1
+       4: ifeq          39
+       7: aload_0
+       8: checkcast     #37                 // class StateKt$example$1
+      11: astore        4
+      13: aload         4
+      15: getfield      #41                 // Field StateKt$example$1.label:I
+      18: ldc           #42                 // int -2147483648
+      20: iand
+      21: ifeq          39
+      24: aload         4
+      26: dup
+      27: getfield      #41                 // Field StateKt$example$1.label:I
+      30: ldc           #42                 // int -2147483648
+      32: isub
+      33: putfield      #41                 // Field StateKt$example$1.label:I
+      36: goto          49
+      39: new           #37                 // class StateKt$example$1
+      42: dup
+      43: aload_0
+      44: invokespecial #46                 // Method StateKt$example$1."<init>":(Lkotlin/coroutines/Continuation;)V
+      47: astore        4
+      49: aload         4
+      51: getfield      #50                 // Field StateKt$example$1.result:Ljava/lang/Object;
+      54: astore_3
+      55: invokestatic  #56                 // Method kotlin/coroutines/intrinsics/IntrinsicsKt.getCOROUTINE_SUSPENDED:()Ljava/lang/Object;
+      58: astore        5
+      60: aload         4
+      62: getfield      #41                 // Field StateKt$example$1.label:I
+      65: tableswitch   { // 0 to 2
+                     0: 92
+                     1: 116
+                     2: 154
+               default: 179
+          }
+      92: aload_3
+      93: invokestatic  #61                 // Method kotlin/ResultKt.throwOnFailure:(Ljava/lang/Object;)V
+      96: aload         4
+      98: aload         4
+     100: iconst_1
+     101: putfield      #41                 // Field StateKt$example$1.label:I
+     104: invokestatic  #63                 // Method suspendFunction1:(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+     107: dup
+     108: aload         5
+     110: if_acmpne     121
+     113: aload         5
+     115: areturn
+     116: aload_3
+     117: invokestatic  #61                 // Method kotlin/ResultKt.throwOnFailure:(Ljava/lang/Object;)V
+     120: aload_3
+     121: checkcast     #65                 // class java/lang/Number
+     124: invokevirtual #69                 // Method java/lang/Number.intValue:()I
+     127: istore_1
+     128: aload         4
+     130: aload         4
+     132: iload_1
+     133: putfield      #72                 // Field StateKt$example$1.I$0:I
+     136: aload         4
+     138: iconst_2
+     139: putfield      #41                 // Field StateKt$example$1.label:I
+     142: invokestatic  #74                 // Method suspendFunction2:(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+     145: dup
+     146: aload         5
+     148: if_acmpne     165
+     151: aload         5
+     153: areturn
+     154: aload         4
+     156: getfield      #72                 // Field StateKt$example$1.I$0:I
+     159: istore_1
+     160: aload_3
+     161: invokestatic  #61                 // Method kotlin/ResultKt.throwOnFailure:(Ljava/lang/Object;)V
+     164: aload_3
+     165: checkcast     #65                 // class java/lang/Number
+     168: invokevirtual #69                 // Method java/lang/Number.intValue:()I
+     171: istore_2
+     172: iload_1
+     173: iload_2
+     174: iadd
+     175: invokestatic  #29                 // Method kotlin/coroutines/jvm/internal/Boxing.boxInt:(I)Ljava/lang/Integer;
+     178: areturn
+     179: new           #76                 // class java/lang/IllegalStateException
+     182: dup
+     183: ldc           #78                 // String call to \'resume\' before \'invoke\' with coroutine
+     185: invokespecial #81                 // Method java/lang/IllegalStateException."<init>":(Ljava/lang/String;)V
+     188: athrow
+
+  public static final void main();
+    Code:
+       0: new           #91                 // class StateKt$main$continuation$1
+       3: dup
+       4: invokespecial #93                 // Method StateKt$main$continuation$1."<init>":()V
+       7: astore_0
+       8: getstatic     #99                 // Field StateKt$main$1.INSTANCE:LStateKt$main$1;
+      11: checkcast     #101                // class kotlin/jvm/functions/Function1
+      14: aload_0
+      15: checkcast     #87                 // class kotlin/coroutines/Continuation
+      18: invokestatic  #107                // Method kotlin/coroutines/ContinuationKt.startCoroutine:(Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)V
+      21: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: invokestatic  #112                // Method main:()V
+       3: return
+}

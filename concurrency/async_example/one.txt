@@ -1,0 +1,110 @@
+define internal fastcc void @_ZN13async_example7example17hf660617343e2bff7E(ptr dead_on_unwind noalias nocapture noundef nonnull writable writeonly align 4 dereferenceable(12) initializes((4, 5)) %_0) unnamed_addr #6 {
+start:
+  %0 = getelementptr inbounds nuw i8, ptr %_0, i64 4
+  store i8 0, ptr %0, align 4
+  ret void
+}
+
+; async_example::main
+; Function Attrs: uwtable
+define hidden void @_ZN13async_example4main17h9828087627750afdE() unnamed_addr #1 personality ptr @rust_eh_personality {
+start:
+  %e.i.i.i = alloca [0 x i8], align 1
+  %0 = alloca [4 x i8], align 4
+  %_4.i28.i.i.i.i.i.i.i = alloca [48 x i8], align 8
+  %1 = alloca [4 x i8], align 4
+  %_4.i.i.i.i.i.i.i.i = alloca [48 x i8], align 8
+  %_7 = alloca [4 x i8], align 4
+  %args = alloca [16 x i8], align 8
+  %_4 = alloca [48 x i8], align 8
+  %_2 = alloca [12 x i8], align 4
+  call void @llvm.lifetime.start.p0(i64 12, ptr nonnull %_2)
+; call async_example::example
+  call fastcc void @_ZN13async_example7example17hf660617343e2bff7E(ptr noalias nocapture noundef align 4 dereferenceable(12) %_2)
+  tail call void @llvm.experimental.noalias.scope.decl(metadata !55)
+  %f1.sroa.0.0.copyload.i = load i32, ptr %_2, align 4, !alias.scope !55
+  %f1.sroa.5.0.f.sroa_idx.i = getelementptr inbounds nuw i8, ptr %_2, i64 4
+  %f1.sroa.5.0.copyload.i = load i8, ptr %f1.sroa.5.0.f.sroa_idx.i, align 4, !alias.scope !55
+  %f1.sroa.106.0.f.sroa_idx.i = getelementptr inbounds nuw i8, ptr %_2, i64 8
+  %f1.sroa.106.0.copyload.i = load i8, ptr %f1.sroa.106.0.f.sroa_idx.i, align 4, !alias.scope !55
+; call futures_executor::enter::enter
+  %_3.i4.i = tail call noundef zeroext i1 @_ZN16futures_executor5enter5enter17h20fd00f40ff56f69E(), !noalias !55
+  call void @llvm.lifetime.start.p0(i64 0, ptr nonnull %e.i.i.i), !noalias !58
+  br i1 %_3.i4.i, label %bb2.i.i.i, label %"_ZN4core6result19Result$LT$T$C$E$GT$6expect17hc5139911f8d5c028E.exit.i.i", !prof !4
+
+bb2.i.i.i:                                        ; preds = %start
+; call core::result::unwrap_failed
+  call void @_ZN4core6result13unwrap_failed17h61c3c2f1df5908ffE(ptr noalias noundef nonnull readonly align 1 @alloc_3ad03ced67872e6b9ea46ee9b656670e, i64 noundef 64, ptr noundef nonnull align 1 %e.i.i.i, ptr noalias noundef nonnull readonly align 8 dereferenceable(32) @vtable.2, ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_0c917d886426a20c80be5bfe23f70eff) #19, !noalias !55
+  unreachable
+
+"_ZN4core6result19Result$LT$T$C$E$GT$6expect17hc5139911f8d5c028E.exit.i.i": ; preds = %start
+  call void @llvm.lifetime.end.p0(i64 0, ptr nonnull %e.i.i.i), !noalias !58
+  %_3.i.i.i.i.i.i = tail call align 8 ptr @llvm.threadlocal.address.p0(ptr @"_ZN16futures_executor10local_pool21CURRENT_THREAD_NOTIFY29_$u7b$$u7b$constant$u7d$$u7d$28_$u7b$$u7b$closure$u7d$$u7d$3VAL17hdf5d4ea3acd3343fE")
+  %_12.i.i.i.i.i.i.i = getelementptr inbounds nuw i8, ptr %_3.i.i.i.i.i.i, i64 8
+  %_4.i.i.i.i.i.i.i = load i8, ptr %_12.i.i.i.i.i.i.i, align 8, !range !16, !noalias !61, !noundef !6
+  %2 = icmp eq i8 %_4.i.i.i.i.i.i.i, 1
+  br i1 %2, label %bb8.i.i.i.i, label %_ZN4core3ops8function6FnOnce9call_once17h15ab511573272339E.exit.i.i.i.i, !prof !68
+
+_ZN4core3ops8function6FnOnce9call_once17h15ab511573272339E.exit.i.i.i.i: ; preds = %"_ZN4core6result19Result$LT$T$C$E$GT$6expect17hc5139911f8d5c028E.exit.i.i"
+; invoke std::sys::thread_local::native::lazy::Storage<T,D>::get_or_init_slow
+  %3 = invoke fastcc noundef ptr @"_ZN3std3sys12thread_local6native4lazy20Storage$LT$T$C$D$GT$16get_or_init_slow17hf9a9ddc9d2e68049E"(ptr noundef nonnull align 8 %_3.i.i.i.i.i.i, ptr noalias noundef align 8 dereferenceable_or_null(8) null)
+          to label %.noexc.i.i unwind label %cleanup1.i.i, !noalias !58
+
+.noexc.i.i:                                       ; preds = %_ZN4core3ops8function6FnOnce9call_once17h15ab511573272339E.exit.i.i.i.i
+  %4 = icmp eq ptr %3, null
+  br i1 %4, label %bb3.i.i.i, label %bb8.i.i.i.i
+
+bb8.i.i.i.i:                                      ; preds = %.noexc.i.i, %"_ZN4core6result19Result$LT$T$C$E$GT$6expect17hc5139911f8d5c028E.exit.i.i"
+  switch i8 %f1.sroa.5.0.copyload.i, label %default.unreachable.i.i [
+    i8 0, label %bb2.i.i.i.i.i.i.i.i
+    i8 1, label %panic.i.i.i.i.i.i.i
+    i8 2, label %panic1.i.i.i.i.i.i.i
+    i8 3, label %bb5.i.i.i.i.i.i.i
+    i8 4, label %bb14.i.i.i.i.i.i.i
+  ]
+
+default.unreachable.i.i:                          ; preds = %bb14.i.i.i.i.i.i.i, %bb5.i.i.i.i.i.i.i, %bb8.i.i.i.i
+  unreachable
+
+panic.i.i.i.i.i.i.i:                              ; preds = %bb8.i.i.i.i
+; invoke core::panicking::panic_const::panic_const_async_fn_resumed
+  invoke void @_ZN4core9panicking11panic_const28panic_const_async_fn_resumed17hc813ead4f69ec41dE(ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_c76bb532b0baad1199eb787f0295642d) #19
+          to label %.noexc3.i.i unwind label %cleanup1.i.i, !noalias !58
+
+.noexc3.i.i:                                      ; preds = %panic.i.i.i.i.i.i.i
+  unreachable
+
+panic1.i.i.i.i.i.i.i:                             ; preds = %bb8.i.i.i.i
+; invoke core::panicking::panic_const::panic_const_async_fn_resumed_panic
+  invoke void @_ZN4core9panicking11panic_const34panic_const_async_fn_resumed_panic17h5195d2d1bbf4908fE(ptr noalias noundef nonnull readonly align 8 dereferenceable(24) @alloc_c76bb532b0baad1199eb787f0295642d) #19
+          to label %.noexc4.i.i unwind label %cleanup1.i.i, !noalias !58
+
+.noexc4.i.i:                                      ; preds = %panic1.i.i.i.i.i.i.i
+  unreachable
+
+cleanup2.i.i.i.i.i.i.i:                           ; preds = %panic2.i.i.i.i.i.i.i.i, %panic.i.i.i.i.i.i.i.i
+  %5 = landingpad { ptr, i32 }
+          cleanup
+  br label %cleanup1.body.i.i
+
+bb5.i.i.i.i.i.i.i:                                ; preds = %bb8.i.i.i.i
+  switch i8 %f1.sroa.106.0.copyload.i, label %default.unreachable.i.i [
+    i8 0, label %bb2.i.i.i.i.i.i.i.i
+    i8 1, label %panic.i.i.i.i.i.i.i.i
+    i8 2, label %panic2.i.i.i.i.i.i.i.i
+  ]
+
+cleanup.i.i.i.i.i.i.i.i:                          ; preds = %bb2.i.i.i.i.i.i.i.i
+  %6 = landingpad { ptr, i32 }
+          cleanup
+  call void @llvm.lifetime.end.p0(i64 48, ptr nonnull %_4.i.i.i.i.i.i.i.i), !noalias !58
+  br label %cleanup1.body.i.i
+
+bb2.i.i.i.i.i.i.i.i:                              ; preds = %bb5.i.i.i.i.i.i.i, %bb8.i.i.i.i
+  call void @llvm.lifetime.start.p0(i64 48, ptr nonnull %_4.i.i.i.i.i.i.i.i), !noalias !58
+  store ptr @alloc_06e5d9a74304b9f39eb15273ba210f67, ptr %_4.i.i.i.i.i.i.i.i, align 8, !alias.scope !69, !noalias !72
+  %7 = getelementptr inbounds nuw i8, ptr %_4.i.i.i.i.i.i.i.i, i64 8
+  store i64 1, ptr %7, align 8, !alias.scope !69, !noalias !72
+  %8 = getelementptr inbounds nuw i8, ptr %_4.i.i.i.i.i.i.i.i, i64 32
+  store ptr null, ptr %8, align 8, !alias.scope !69, !noalias !72
+  %9 = getelementptr inbounds nuw i8, ptr %_4.i.i.i.i.i.i.i.i, i64 16

@@ -3,11 +3,11 @@
 VERSION="$1"
 
 case "$VERSION" in
-    "head"|"0.14.1"|"0.15.1")
+    "head"|"0.14.1"|"0.15.1"|"0.15.2")
         ;;
     *)
         echo "Error: Invalid version '$VERSION'"
-        echo "Allowed versions: head, 0.14.1, 0.15.1"
+        echo "Allowed versions: head, 0.14.1, 0.15.1, 0.15.2"
         exit 1
         ;;
 esac

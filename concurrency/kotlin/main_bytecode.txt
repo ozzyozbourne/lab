@@ -1,0 +1,80 @@
+Compiled from "FlowExample.kt"
+public final class FlowExampleKt {
+  public static final kotlinx.coroutines.flow.Flow<java.lang.Integer> simpleFlow();
+    Code:
+       0: new           #10                 // class FlowExampleKt$simpleFlow$1
+       3: dup
+       4: aconst_null
+       5: invokespecial #14                 // Method FlowExampleKt$simpleFlow$1."<init>":(Lkotlin/coroutines/Continuation;)V
+       8: checkcast     #16                 // class kotlin/jvm/functions/Function2
+      11: invokestatic  #22                 // Method kotlinx/coroutines/flow/FlowKt.flow:(Lkotlin/jvm/functions/Function2;)Lkotlinx/coroutines/flow/Flow;
+      14: areturn
+
+  public static final java.lang.Object flowWithOperators(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    Code:
+       0: invokestatic  #28                 // Method simpleFlow:()Lkotlinx/coroutines/flow/Flow;
+       3: astore_1
+       4: nop
+       5: iconst_0
+       6: istore_2
+       7: aload_1
+       8: astore_3
+       9: iconst_0
+      10: istore        4
+      12: iconst_0
+      13: istore        5
+      15: new           #30                 // class FlowExampleKt$flowWithOperators$$inlined$map$1
+      18: dup
+      19: aload_3
+      20: invokespecial #33                 // Method FlowExampleKt$flowWithOperators$$inlined$map$1."<init>":(Lkotlinx/coroutines/flow/Flow;)V
+      23: checkcast     #35                 // class kotlinx/coroutines/flow/Flow
+      26: nop
+      27: nop
+      28: astore_1
+      29: nop
+      30: iconst_0
+      31: istore_2
+      32: aload_1
+      33: astore_3
+      34: iconst_0
+      35: istore        4
+      37: iconst_0
+      38: istore        5
+      40: new           #37                 // class FlowExampleKt$flowWithOperators$$inlined$filter$1
+      43: dup
+      44: aload_3
+      45: invokespecial #38                 // Method FlowExampleKt$flowWithOperators$$inlined$filter$1."<init>":(Lkotlinx/coroutines/flow/Flow;)V
+      48: checkcast     #35                 // class kotlinx/coroutines/flow/Flow
+      51: nop
+      52: nop
+      53: getstatic     #44                 // Field FlowExampleKt$flowWithOperators$4.INSTANCE:LFlowExampleKt$flowWithOperators$4;
+      56: checkcast     #46                 // class kotlinx/coroutines/flow/FlowCollector
+      59: aload_0
+      60: invokeinterface #50,  3           // InterfaceMethod kotlinx/coroutines/flow/Flow.collect:(Lkotlinx/coroutines/flow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+      65: dup
+      66: invokestatic  #56                 // Method kotlin/coroutines/intrinsics/IntrinsicsKt.getCOROUTINE_SUSPENDED:()Ljava/lang/Object;
+      69: if_acmpne     73
+      72: areturn
+      73: pop
+      74: getstatic     #61                 // Field kotlin/Unit.INSTANCE:Lkotlin/Unit;
+      77: areturn
+
+  public static final void main();
+    Code:
+       0: aconst_null
+       1: new           #78                 // class FlowExampleKt$main$1
+       4: dup
+       5: aconst_null
+       6: invokespecial #79                 // Method FlowExampleKt$main$1."<init>":(Lkotlin/coroutines/Continuation;)V
+       9: checkcast     #16                 // class kotlin/jvm/functions/Function2
+      12: iconst_1
+      13: aconst_null
+      14: invokestatic  #85                 // Method kotlinx/coroutines/BuildersKt.runBlocking$default:(Lkotlin/coroutines/CoroutineContext;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Ljava/lang/Object;
+      17: pop
+      18: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: invokestatic  #88                 // Method main:()V
+       3: return
+}
