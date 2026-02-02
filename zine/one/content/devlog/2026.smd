@@ -1,0 +1,22 @@
+---
+.title = "Devlog - 2026",
+.date = @date("2026-02-01T00:00:00"),
+.author = "Osaid Khan",
+.layout = "devlog.shtml",
+.draft = false,
+---
+[]($section.id('about'))
+## About this Devlog
+
+This is a non-exhaustive, curated list of changes meant to help users quickly see what has improved since they last checked.
+
+You can [subscribe to the latest devlog via RSS]($link.page('devlog').alternative('rss')).
+
+This page lists entries for the year 2026, for past entries consult the
+[devlog archive](/devlog/).
+
+[]($section.id('nelly'))
+Content for the nelly section goes here.
+
+## [First Entry]($section.id("2026-02-01T00:00:00"))
+Welcome to the 2026 devlog!
