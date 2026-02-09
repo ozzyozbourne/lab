@@ -1,4 +1,0 @@
-1) Has a formattor 
-2) Has a Repl
-
-compiler assumes all the functions declared with the def will rasie an error 
