@@ -49,7 +49,7 @@
 #let generic-one-by-two(left:, right:) = { [ #left #h(1fr) #right ] }
 
 #let edu(institution:, dates:, degree:, gpa: "", location:) = {
-  let degree-line = if gpa != "" {emph(degree + " (GPA - " + gpa + ")")} else {emph(degree)}
+  let degree = if gpa != "" {emph(degree + " (GPA - " + gpa + ")")} else {emph(degree)}
   generic-two-by-two(top-left: strong(institution), top-right: location, bottom-left: emph(degree), bottom-right: emph(dates))
 }
 
