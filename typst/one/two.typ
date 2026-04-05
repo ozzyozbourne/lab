@@ -1,13 +1,12 @@
 #let resume(
-  author: "",              author-position: left,       personal-info-position: left, pronouns: "",           location: "",            
-  email: "",               github: "",                  linkedin: "",                 phone: "",              personal-site: "", 
-  accent-color: "#000000", font: "New Computer Modern", paper: "us-letter",           author-font-size: 20pt, 
-  font-size: 10pt,         lang: "en",                  body
+ author: "Osaid Khan",    github: "github.com/ozzyozbourne", personal-info-position: left, author-position: left,             
+ accent-color: "#000000", author-font-size: 20pt,            font-size: 10pt,                 
+ body
 ) = {
 
-  set document(author: author, title: author)
-  set text(font: font, size: font-size, lang: lang, ligatures: false)
-  set page(margin: (0.5in), paper: paper)
+  set document(author: author, title: "Resume")
+  set text(font: "New Computer Modern", size: font-size, lang: "en", ligatures: false)
+  set page(margin: (0.5in), paper: "us-letter")
 
   show link: underline
   show heading.where(level: 2): it => [
@@ -38,12 +37,13 @@
     align(personal-info-position)[
       #{
         let items = (
-          contact-item(pronouns),                             contact-item(phone, link-type: "tel:"), 
-          contact-item(location),                             contact-item(email, link-type: "mailto:"),    
-          contact-item(github, link-type: "https://"),        contact-item(linkedin, link-type: "https://"), 
-          contact-item(personal-site, link-type: "https://")
+          contact-item("+1 (945) 304-5781", link-type: "tel:"),    
+          contact-item("Richardson TX"), 
+          contact-item("khanosaid726@gmail.com", link-type: "mailto:"), 
+          contact-item("www.linkedin.com/in/-osaid-khan/", link-type: "https://"), 
+          contact-item(github, link-type: "https://")
         )
-        items.filter(x => x != none).join("  |  ")
+        items.join("  |  ")
       }
     ]
   )
@@ -61,18 +61,9 @@
 
 #let generic-one-by-two(left: "", right: "") = { [ #left #h(1fr) #right ] }
 
-// Cannot just use normal --- ligature because ligatures are disabled for good reasons
-#let dates-helper(start-date: "", end-date: "") = {
-  if start-date == "" { end-date } 
-  else { start-date + " " + sym.dash.em + " " + end-date }
-}
-
 #let edu(institution: "", dates: "", degree: "", gpa: "", location: "") = {
-  if gpa == "" { 
-    generic-two-by-two(top-left: strong(institution), top-right: location, bottom-left: emph(degree), bottom-right: emph(dates))
-  } else {
-    generic-two-by-two(top-left: strong(institution), top-right: location, bottom-left: emph(degree), bottom-right: emph(dates))
-  }
+  let degree-line = if gpa != "" {emph(degree + " (GPA - " + gpa + ")")} else {emph(degree)}
+  generic-two-by-two(top-left: strong(institution), top-right: location, bottom-left: emph(degree), bottom-right: emph(dates))
 }
 
 #let work(title: "", dates: "", company: "", location: "") = {
