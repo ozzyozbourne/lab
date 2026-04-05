@@ -1,7 +1,6 @@
 #let resume(
- author: "Osaid Khan",    github: "github.com/ozzyozbourne", personal-info-position: left, author-position: left,             
- accent-color: "#000000", author-font-size: 20pt,            font-size: 10pt,                 
- body
+ author: "Osaid Khan", personal-info-position: left, author-position: left, accent-color: "#000000", author-font-size: 20pt, 
+ font-size: 10pt, body
 ) = {
   set document(author: author, title: "Resume")
   set text(font: "New Computer Modern", size: font-size, lang: "en", ligatures: false)
@@ -33,7 +32,7 @@
           contact-item("Richardson TX"), 
           contact-item("khanosaid726@gmail.com", link-type: "mailto:"), 
           contact-item("www.linkedin.com/in/-osaid-khan/", link-type: "https://"), 
-          contact-item(github, link-type: "https://")
+          contact-item("github.com/ozzyozbourne", link-type: "https://")
         )
         items.join("  |  ")
       }
@@ -43,21 +42,21 @@
   body
 }
 
-#let generic-two-by-two(top-left: "", top-right: "", bottom-left: "", bottom-right: "" ) = {
+#let generic-two-by-two(top-left:, top-right:, bottom-left:, bottom-right:) = {
   [ #top-left #h(1fr) #top-right \ #bottom-left #h(1fr) #bottom-right ]
 }
 
-#let generic-one-by-two(left: "", right: "") = { [ #left #h(1fr) #right ] }
+#let generic-one-by-two(left:, right:) = { [ #left #h(1fr) #right ] }
 
-#let edu(institution: "", dates: "", degree: "", gpa: "", location: "") = {
+#let edu(institution:, dates:, degree:, gpa: "", location:) = {
   let degree-line = if gpa != "" {emph(degree + " (GPA - " + gpa + ")")} else {emph(degree)}
   generic-two-by-two(top-left: strong(institution), top-right: location, bottom-left: emph(degree), bottom-right: emph(dates))
 }
 
-#let work(title: "", dates: "", company: "", location: "") = {
+#let work(title:, dates:, company:, location:) = {
   generic-two-by-two(top-left: strong(title), top-right: dates, bottom-left: company, bottom-right: emph(location))
 }
 
-#let project(name: "", technologies: "", git: "") = {
-  generic-one-by-two(left: { [*#name* | #emph(technologies)] }, right: { contact-item(github + "/" + git, link-type: "https://") })
+#let project(name:, technologies:, url:) = {
+  generic-one-by-two(left: { [*#name* | #emph(technologies)] }, right: { link("https://" + url)[#url] })
 }
